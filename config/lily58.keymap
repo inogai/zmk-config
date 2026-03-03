@@ -10,6 +10,14 @@
 #include <dt-bindings/zmk/ext_power.h>
 
 / {
+    combos {
+        compatible = "zmk,combos";
+        alt_ret_bspc {
+            bindings = <&kp BSPC>;
+            key-positions = <48 51>;
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
