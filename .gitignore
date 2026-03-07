@@ -1,2 +1,7 @@
+.DS_Store
 
 .zmk/
+gen/
+
+.direnv/
+.envrc
