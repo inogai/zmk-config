@@ -41,6 +41,10 @@
                 aiohttp
                 zeroconf
                 kivy
+                # macOS transparent overlay
+                pyobjc-core
+                pyobjc-framework-Cocoa
+                pyobjc-framework-Quartz
               ]))
           ];
         };

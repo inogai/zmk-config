@@ -2,7 +2,6 @@
 
 .zmk/
 gen/
-companion/
 
 .direnv/
 .envrc

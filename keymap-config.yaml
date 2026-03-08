@@ -1,0 +1,103 @@
+# Keymap-drawer configuration with Tabler icons and Unicode symbols
+# Usage: keymap draw -c keymap-config.yaml gen/lily58_keymap.yaml
+
+draw_config:
+  # Original size - will scale during PNG conversion
+  key_w: 75.0
+  key_h: 70.0
+  glyph_tap_size: 20
+  glyph_hold_size: 18
+  glyph_shifted_size: 14
+  small_pad: 4.0
+
+parse_config:
+  zmk_keycode_map:
+    # Navigation - Tabler icons
+    UP: $$tabler:arrow-up$$
+    DOWN: $$tabler:arrow-down$$
+    LEFT: $$tabler:arrow-left$$
+    RIGHT: $$tabler:arrow-right$$
+    HOME: $$tabler:home$$
+
+    # Basic keys - Unicode symbols (Tabler doesn't have these)
+    ESC: ⎋
+    ENTER: ⏎
+    RET: ⏎
+    BACKSPACE: $$tabler:backspace$$
+    BSPC: $$tabler:backspace$$
+    TAB: ⇥
+    DELETE: ⌦
+    DEL: ⌦
+    SPACE: $$tabler:space$$
+    INSERT: ⤢
+    INS: ⤢
+    END: ⤓
+    PG_UP: ⇞
+    PG_DN: ⇟
+    PGUP: ⇞
+    PGDN: ⇟
+
+    # Modifiers - Mac-style symbols
+    LCTRL: ⌃
+    RCTRL: ⌃
+    LALT: ⌥
+    RALT: ⌥
+    LGUI: ⌘
+    RGUI: ⌘
+    LSHFT: ⇧
+    RSHFT: ⇧
+    LSFT: ⇧
+    RSFT: ⇧
+
+    # Media - Tabler icons
+    VOLU: $$tabler:volume$$
+    VOLD: $$tabler:volume-2$$
+    MUTE: $$tabler:volume-off$$
+    PLAY: $$tabler:player-play$$
+    PAUSE: $$tabler:player-pause$$
+    STOP: $$tabler:player-stop$$
+    MPLY: $$tabler:player-play$$
+    MNXT: $$tabler:player-track-next$$
+    MPRV: $$tabler:player-track-prev$$
+
+    # System - Tabler icons
+    BRIU: $$tabler:brightness-up$$
+    BRID: $$tabler:brightness-down$$
+    PWR: $$tabler:power$$
+    POWER: $$tabler:power$$
+    SLEP: $$tabler:moon$$
+    ALARM: $$tabler:bell$$
+
+    # Symbols layer
+    EXCL: "!"
+    AT: "@"
+    HASH: "#"
+    DLLR: "$"
+    PRCNT: "%"
+    CARET: "^"
+    AMPS: "&"
+    STAR: "*"
+    LPAR: "("
+    RPAR: ")"
+    MINUS: "-"
+    PLUS: "+"
+    EQUAL: "="
+    UNDER: "_"
+    LBRC: "{"
+    RBRC: "}"
+    LBKT: "["
+    RBKT: "]"
+    BSLH: "\\"
+    FSLH: "/"
+    PIPE: "|"
+    SCLN: ";"
+    COLN: ":"
+    SQT: "'"
+    DQT: '"'
+    GRAVE: "`"
+    TILD: "~"
+    LT: "<"
+    GT: ">"
+    COMM: ","
+    DOT: "."
+    QMARK: "?"

@@ -1,14 +1,15 @@
 keyboard := "lily58"
+config := "keymap-config.yaml"
 
 # ── Keymap visualization ──────────────────────────────────────────
 
 parse:
-    keymap parse -c 10 -z config/{{ keyboard }}.keymap > gen/{{ keyboard }}_keymap.yaml
+    keymap -c {{ config }} parse -c 10 -z config/{{ keyboard }}.keymap > gen/{{ keyboard }}_keymap.yaml
 
 draw: parse
-    keymap draw gen/{{ keyboard }}_keymap.yaml > gen/{{ keyboard }}_keymap.svg
+    keymap -c {{ config }} draw gen/{{ keyboard }}_keymap.yaml > gen/{{ keyboard }}_keymap.svg
 
-# Generate per-layer PNGs for the companion app
+# Generate per-layer PNGs for the companion app with Tabler icons (2x scaled)
 layer-images: parse
     #!/usr/bin/env bash
     set -euo pipefail
@@ -16,8 +17,8 @@ layer-images: parse
     fnames=("base" "extra" "tap" "button" "nav" "mouse" "media" "num" "sym" "fun" "wm")
     for i in "${!layers[@]}"; do
         echo "  ${fnames[$i]}.png"
-        keymap draw gen/{{ keyboard }}_keymap.yaml -s "${layers[$i]}" \
-            | rsvg-convert -d 192 -p 192 -o "companion/assets/${fnames[$i]}.png"
+        keymap -c {{ config }} draw gen/{{ keyboard }}_keymap.yaml -s "${layers[$i]}" \
+            | rsvg-convert --zoom 1 -o "companion/assets/${fnames[$i]}.png"
     done
 
 # ── Firmware ──────────────────────────────────────────────────────
@@ -35,16 +36,16 @@ flash-right: fetch
 
 # Run companion app locally (USB)
 companion:
-    python3 companion/main.py
+    cd companion && python3 main.py
 
 # Run companion app locally (BLE — requires sudo on macOS)
 companion-ble:
-    sudo python3 companion/main.py --ble
+    cd companion && sudo --preserve-env=PATH,PYTHONPATH python3 main.py --ble
 
 # Run companion app as web server (USB)
 companion-web:
-    python3 companion/main.py --web
+    cd companion && python3 main.py --web
 
 # Run companion app as web server (BLE — requires sudo on macOS)
 companion-web-ble:
-    sudo python3 companion/main.py --ble --web
+    cd companion && sudo --preserve-env=PATH,PYTHONPATH python3 main.py --ble --web
