@@ -1,5 +1,5 @@
 {
-  description = "A Nix-flake-based Node.js development environment";
+  description = "ZMK keyboard config development environment";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/release-25.11";
 
@@ -30,6 +30,18 @@
           packages = with pkgs; [
             just
             keymap-drawer
+            # SVG to PNG conversion for layer images
+            librsvg
+            # Keyboard Layers App Companion deps
+            hidapi
+            (python313.withPackages (ps:
+              with ps; [
+                hid
+                tenacity
+                aiohttp
+                zeroconf
+                kivy
+              ]))
           ];
         };
       }
