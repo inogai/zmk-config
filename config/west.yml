@@ -4,14 +4,14 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: maatthc
-      url-base: https://github.com/maatthc
+    - name: inogai
+      url-base: https://github.com/inogai
   projects:
     - name: zmk
       remote: zmkfirmware
       import: app/west.yml
     - name: zmk-feature-appcompanion
-      remote: maatthc
+      remote: inogai
       revision: main
   self:
     path: config
