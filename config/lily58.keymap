@@ -382,15 +382,15 @@
             >;
         };
 
-        /* 10: WM — AeroSpace workspace management (mirrors NUM with LA modifier) */
+        /* 10: WM — AeroSpace workspace and window management */
         WM {
             display-name = "WM";
             bindings = <
 &none  &none          &none          &none          &none          &none                              &none          &none          &none          &none          &none          &none
-&none  &kp LA(LBKT)   &kp LA(N7)     &kp LA(N8)     &kp LA(N9)     &kp LA(RBKT)                       &none          &u_to_U_BASE   &u_to_U_EXTRA  &u_to_U_TAP    &bootloader    &none
-&none  &kp LA(SEMI)   &kp LA(N4)     &kp LA(N5)     &kp LA(N6)     &kp LA(EQUAL)                      &none          &kp LSHFT      &kp LCTRL      &kp LALT       &kp LGUI       &none
-&none  &kp LA(GRAVE)  &kp LA(N1)     &kp LA(N2)     &kp LA(N3)     &kp LA(BSLH)   &none       &none  &none          &u_to_U_WM     &u_to_U_NAV    &kp RALT       &none          &none
-                                       &kp LA(DOT)    &kp LA(N0)     &kp LA(MINUS)  &none  &none  &none          &none          &none
+&none  &kp LA(LBKT)   &kp LA(N7)     &kp LA(N8)     &kp LA(N9)     &kp LA(RBKT)                       &none          &kp LA(DOT)    &kp LA(N0)     &kp LA(MINUS)  &none          &none
+&none  &kp LA(SEMI)   &kp LA(N4)     &kp LA(N5)     &kp LA(N6)     &kp LA(EQUAL)                      &none          &kp LA(H)      &kp LA(J)      &kp LA(K)      &kp LA(L)      &none
+&none  &kp LA(GRAVE)  &kp LA(N1)     &kp LA(N2)     &kp LA(N3)     &kp LA(BSLH)     &none   &none     &none          &kp LA(ESC)    &u_to_U_NAV    &kp RALT       &none          &none
+                                     &none          &none          &none            &none   &none     &none          &kp LSHFT      &none
             >;
         };
     };
