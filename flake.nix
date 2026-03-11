@@ -31,7 +31,7 @@
             just
             keymap-drawer
             # SVG to PNG conversion for layer images
-            librsvg
+            resvg
             # Keyboard Layers App Companion deps
             hidapi
             (python313.withPackages (ps:

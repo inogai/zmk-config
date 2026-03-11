@@ -18,7 +18,7 @@ layer-images: parse
     for i in "${!layers[@]}"; do
         echo "  ${fnames[$i]}.png"
         keymap -c {{ config }} draw gen/{{ keyboard }}_keymap.yaml -s "${layers[$i]}" \
-            | rsvg-convert --zoom 1 -o "companion/assets/${fnames[$i]}.png"
+            | resvg --resources-dir . -z 2 - "companion/assets/${fnames[$i]}.png"
     done
 
 # ── Firmware ──────────────────────────────────────────────────────
