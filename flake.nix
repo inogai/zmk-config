@@ -30,22 +30,6 @@
           packages = with pkgs; [
             just
             keymap-drawer
-            # SVG to PNG conversion for layer images
-            resvg
-            # Keyboard Layers App Companion deps
-            hidapi
-            (python313.withPackages (ps:
-              with ps; [
-                hid
-                tenacity
-                aiohttp
-                zeroconf
-                kivy
-                # macOS transparent overlay
-                pyobjc-core
-                pyobjc-framework-Cocoa
-                pyobjc-framework-Quartz
-              ]))
           ];
         };
       }
