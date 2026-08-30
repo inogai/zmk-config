@@ -324,11 +324,11 @@
         NAV {
             display-name = "Nav";
             bindings = <
-&none  &none          &none          &none          &none          &none                              &none          &none          &none          &none          &none          &none
-&none  &none          &none          &none          &none          &none                              &u_to_U_TAP    &none          &none          &none          &none          &none
-&none  &none          &none          &none          &none          &none                              &kp LEFT       &kp DOWN       &kp UP         &kp RIGHT      &none          &none
-&none  &none          &none          &none          &none          &none          &none       &none  &kp HOME       &kp END        &kp PG_UP      &kp PG_DN      &none          &none
-                                       &none          &none          &none          &none  &none  &kp RET        &kp BSPC       &kp DEL
+&trans &trans &trans &trans &trans &trans &none          &none          &none          &none          &none          &none
+&trans &trans &trans &trans &trans &trans &u_to_U_TAP    &none          &none          &none          &none          &none
+&trans &trans &trans &trans &trans &trans &kp LEFT       &kp DOWN       &kp UP         &kp RIGHT      &none          &none
+&trans &trans &trans &trans &trans &trans &none          &none       &kp HOME       &kp END        &kp PG_UP      &kp PG_DN      &none          &none
+                                       &trans &trans &trans &none  &none  &kp RET        &kp BSPC       &kp DEL
             >;
         };
 
