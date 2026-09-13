@@ -43,6 +43,7 @@ This is a [ZMK](https://zmk.dev/) keyboard firmware configuration repository for
 ### Custom Behaviors
 
 - **`u_mt`** — Hold-tap for mod keys (tap-preferred, 250ms tapping term, 120ms prior-idle). Used for home-row mods.
+- **`u_mt_gui_esc`** — Hold-tap for the left inner thumb (BASE + EXTRA): hold = LGUI (Cmd), tap = ESC. Deliberately `hold-preferred` (no `require-prior-idle`) so any other keypress locks in Cmd for chords; ESC stays standalone in vim/games.
 - **`u_lt`** — Hold-tap for layer keys (tap-preferred, 250ms). Hold = momentary layer, tap = keypress.
 - **`u_to_U_*`** — Tap-dance guards: require double-tap to activate `&to <layer>`. Prevents accidental layer locks.
 - **`u_bt_sel_*`** — Mod-morph: tap = select Bluetooth profile, shift+tap = select then clear (disconnect).
