@@ -66,6 +66,11 @@ draw_config:
         <path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zm0 7.5l-5.5-2.75L12 4.5l5.5 2.25L12 9.5z"/>
         <text x="22" y="12" font-size="8" fill="currentColor">WM</text>
       </svg>
+    to_zide: |
+      <svg viewBox="0 0 36 16">
+        <path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zm0 7.5l-5.5-2.75L12 4.5l5.5 2.25L12 9.5z"/>
+        <text x="22" y="12" font-size="8" fill="currentColor">Zide</text>
+      </svg>
 
 parse_config:
   raw_binding_map:
@@ -84,6 +89,18 @@ parse_config:
     "&u_to_U_MEDIA": $$to_media$$
     "&u_to_U_BUTTON": $$to_btn$$
     "&u_to_U_WM": $$to_wm$$
+
+    # ZIDE layer — zellij Ctrl-b sequences (see the zj_* macros in the keymap)
+    "&zj_focus_l": "←"
+    "&zj_focus_r": "→"
+    "&zj_focus_u": "↑"
+    "&zj_focus_d": "↓"
+    "&zj_tab_n": "⇥"
+    "&zj_tab_p": "⇤"
+    "&zj_new_tab": "+⇥"
+    "&zj_close_pane": "✕"
+    "&zj_float": "❐"
+    "&zj_host": "⤒"
 
     # Caps word
     "&u_caps_word": $$mdi:caps-lock$$

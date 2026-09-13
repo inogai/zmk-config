@@ -37,6 +37,7 @@
 #define U_SYM    8
 #define U_FUN    9
 #define U_WM     10
+#define U_ZIDE   11
 
 /* ── Mouse defaults ────────────────────────────────────────────── */
 #define ZMK_POINTING_DEFAULT_MOVE_VAL 1250
@@ -101,6 +102,83 @@
             #binding-cells = <0>;
             wait-ms = <0>;
             bindings = <&bt BT_SEL 4 &bt BT_CLR>;
+        };
+
+        /* ZIDE layer — zellij actions. The prefix (Ctrl-b for tmux mode, Ctrl-p
+           for floating, Ctrl-o for session) goes first as its own tap, then the
+           following key: zellij wants the prefix RELEASED before that key, so
+           these must be two taps and never a three-key chord. 40/40 is a
+           starting point; if zellij swallows the trailing key, raise it
+           (80–120). */
+        zj_focus_l: zj_focus_l {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp H>;
+        };
+        zj_focus_r: zj_focus_r {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp L>;
+        };
+        zj_focus_u: zj_focus_u {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp K>;
+        };
+        zj_focus_d: zj_focus_d {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp J>;
+        };
+        zj_tab_n: zj_tab_n {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp N>;
+        };
+        zj_tab_p: zj_tab_p {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp P>;
+        };
+        zj_new_tab: zj_new_tab {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp C>;
+        };
+        zj_close_pane: zj_close_pane {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp X>;
+        };
+        zj_float: zj_float {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(P) &kp W>;
+        };
+        zj_host: zj_host {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(O) &kp RBKT>;
         };
     };
 };
@@ -291,7 +369,7 @@
 &kp TAB &kp Q          &kp W          &kp E          &kp R          &kp T                              &kp Y          &kp U          &kp I          &kp O          &kp P              &kp EQUAL
 &kp LSHFT &kp A        &kp S          &kp D          &kp F          &kp G                              &kp H          &kp J          &kp K          &kp L          &kp SEMI          &none
 &kp LCTRL &u_lt U_NAV COMMA &u_lt U_FUN Z &u_mt RALT X &kp C        &kp V          &none       &none  &kp B          &kp N          &kp M          &u_mt RALT DOT &u_lt U_BUTTON SLASH &none
-                                       &kp LALT        &u_mt_gui_esc LGUI ESC &kp SPACE      &none  &none  &u_lt U_SYM RET &u_lt U_NUM BSPC &u_lt U_FUN DEL
+                                       &kp LALT        &u_mt_gui_esc LGUI ESC &u_lt U_ZIDE SPACE &none  &none  &u_lt U_SYM RET &u_lt U_NUM BSPC &u_lt U_FUN DEL
             >;
         };
 
@@ -412,6 +490,20 @@
 &none  &kp LA(SEMI)   &kp LA(N4)     &kp LA(N5)     &kp LA(N6)     &kp LA(EQUAL)                      &none          &kp LA(H)      &kp LA(J)      &kp LA(K)      &kp LA(L)      &none
 &none  &kp LA(GRAVE)  &kp LA(N1)     &kp LA(N2)     &kp LA(N3)     &kp LA(BSLH)     &none   &none     &none          &kp LA(ESC)    &u_to_U_NAV    &kp RALT       &none          &none
                                      &none          &none          &none            &none   &none     &none          &kp LSHFT      &none
+            >;
+        };
+
+        /* 11: ZIDE — zellij/zide actions. Held with SPACE; the right hand sends
+           the Ctrl-b sequences (see the zj_* macros), left hand is &trans so
+           typing keeps working while the layer is held. */
+        ZIDE {
+            display-name = "Zide";
+            bindings = <
+&trans &trans &trans &trans &trans &trans &none          &none          &none          &none          &none          &none
+&trans &trans &trans &trans &trans &trans &zj_focus_u    &zj_float      &zj_host       &zj_new_tab    &none          &none
+&trans &trans &trans &trans &trans &trans &zj_focus_l    &zj_tab_n      &zj_tab_p      &zj_focus_r    &none          &none
+&trans &trans &trans &trans &trans &trans &none          &none          &zj_focus_d    &zj_close_pane &none          &none          &none          &none
+                                       &trans &trans &trans &none  &none  &none          &none          &none
             >;
         };
     };

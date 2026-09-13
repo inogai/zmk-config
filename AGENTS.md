@@ -24,7 +24,7 @@ This is a [ZMK](https://zmk.dev/) keyboard firmware configuration repository for
 
 ## Keymap Design
 
-### Layers (11 total)
+### Layers (12 total)
 
 | Index | Name     | Purpose |
 |-------|----------|---------|
@@ -39,6 +39,7 @@ This is a [ZMK](https://zmk.dev/) keyboard firmware configuration repository for
 | 8     | Sym      | Symbols layout |
 | 9     | Fun      | Function keys (F1-F12) + Print Screen / Scroll Lock / Pause |
 | 10    | WM       | AeroSpace window manager shortcuts (macOS, Left Alt combos) |
+| 11    | Zide     | zellij/zide actions: `Ctrl-b` (tmux mode) then one key, plus `Ctrl-p w` (float) and `Ctrl-o ]` (host). Held with SPACE. |
 
 ### Custom Behaviors
 
@@ -53,6 +54,7 @@ This is a [ZMK](https://zmk.dev/) keyboard firmware configuration repository for
 ### Key Design Decisions
 
 - **Mac-first**: Clipboard shortcuts use Cmd (LGUI), not Ctrl. WM layer targets AeroSpace on macOS.
+- **ZIDE sends zellij prefixes, not Cmd**: `Ctrl-b` (tmux mode), `Ctrl-p w` (floating), `Ctrl-o ]` (session), each as **two separate taps** — the prefix is released before the following key, never a three-key chord. Trigger is `&u_lt U_ZIDE SPACE` in BASE (hold = layer, tap still types a space); EXTRA deliberately keeps a plain `&kp SPACE` as a plain-space escape hatch.
 - **No top number row**: Miryoku-style — numbers are on the Num layer, symbols on Sym, F-keys on Fun.
 - **Double-tap layer lock**: All `&to` layer switches require a double-tap to prevent accidental activation.
 - **Shift-functions**: Bluetooth profile clear, output force-USB, and caps lock are accessed via shift-modified taps.
