@@ -90,7 +90,8 @@ parse_config:
     "&u_to_U_BUTTON": $$to_btn$$
     "&u_to_U_WM": $$to_wm$$
 
-    # ZIDE layer — zellij Ctrl-b sequences (see the zj_* macros in the keymap)
+    # ZIDE layer — zellij prefixes (Ctrl-p pane mode / Ctrl-t tab mode /
+    # Ctrl-o session), see the zj_* macros in the keymap
     "&zj_focus_l": "←"
     "&zj_focus_r": "→"
     "&zj_focus_u": "↑"
@@ -98,9 +99,13 @@ parse_config:
     "&zj_tab_n": "⇥"
     "&zj_tab_p": "⇤"
     "&zj_new_tab": "+⇥"
+    "&zj_new_pane": "⊞"
     "&zj_close_pane": "✕"
     "&zj_float": "❐"
     "&zj_host": "⤒"
+    "&zj_float_next": "❐+"
+    "&zj_float_prev": "❐-"
+    "&zj_guest": "⤓"
 
     # Caps word
     "&u_caps_word": $$mdi:caps-lock$$

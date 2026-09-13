@@ -104,60 +104,69 @@
             bindings = <&bt BT_SEL 4 &bt BT_CLR>;
         };
 
-        /* ZIDE layer — zellij actions. The prefix (Ctrl-b for tmux mode, Ctrl-p
-           for floating, Ctrl-o for session) goes first as its own tap, then the
+        /* ZIDE layer — zellij actions. The prefix (Ctrl-p for pane mode, Ctrl-t
+           for tab mode, Ctrl-o for session) goes first as its own tap, then the
            following key: zellij wants the prefix RELEASED before that key, so
-           these must be two taps and never a three-key chord. 40/40 is a
-           starting point; if zellij swallows the trailing key, raise it
-           (80–120). */
+           these must be two taps and never a three-key chord. Ctrl-p / Ctrl-t
+           are preferred wherever the action exists there, because both the
+           local config and the cockpit bind them; only close-pane has no common
+           path (Ctrl-b x is tmux mode, i.e. cockpit-only). 40/40 is a starting
+           point — if zellij swallows the trailing key, raise it (80–120). */
         zj_focus_l: zj_focus_l {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(B) &kp H>;
+            bindings = <&kp LC(P) &kp H>;
         };
         zj_focus_r: zj_focus_r {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(B) &kp L>;
+            bindings = <&kp LC(P) &kp L>;
         };
         zj_focus_u: zj_focus_u {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(B) &kp K>;
+            bindings = <&kp LC(P) &kp K>;
         };
         zj_focus_d: zj_focus_d {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(B) &kp J>;
+            bindings = <&kp LC(P) &kp J>;
         };
         zj_tab_n: zj_tab_n {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(B) &kp N>;
+            bindings = <&kp LC(T) &kp L>;
         };
         zj_tab_p: zj_tab_p {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(B) &kp P>;
+            bindings = <&kp LC(T) &kp H>;
         };
         zj_new_tab: zj_new_tab {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(B) &kp C>;
+            bindings = <&kp LC(T) &kp N>;
+        };
+        zj_new_pane: zj_new_pane {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(P) &kp N>;
         };
         zj_close_pane: zj_close_pane {
             compatible = "zmk,behavior-macro";
@@ -179,6 +188,38 @@
             wait-ms = <40>;
             tap-ms = <40>;
             bindings = <&kp LC(O) &kp RBKT>;
+        };
+
+        /* Floating panes. Alt ] / Alt [ are zellij's built-in "next/previous
+           swap layout" — for a focused floating pane that cycles its
+           swap_floating_layout presets (staggered -> enlarged -> spread), which
+           is how the floating pane gets bigger. One tap, no prefix. Sending
+           these from the layer also means the [ ] keys (SYM layer) are never
+           needed. */
+        zj_float_next: zj_float_next {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LA(RBKT)>;
+        };
+        zj_float_prev: zj_float_prev {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LA(LBKT)>;
+        };
+
+        /* Nested sessions (zellij 0.45+, i.e. the zide cockpit): Ctrl-o ] goes
+           up to the host session, Ctrl-o [ comes back down to the guest. Both
+           are prefixed, and both are emitted here so no bracket key is needed. */
+        zj_guest: zj_guest {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(O) &kp LBKT>;
         };
     };
 };
@@ -499,10 +540,9 @@
         ZIDE {
             display-name = "Zide";
             bindings = <
-&trans &trans &trans &trans &trans &trans &none          &none          &none          &none          &none          &none
-&trans &trans &trans &trans &trans &trans &zj_focus_u    &zj_float      &zj_host       &zj_new_tab    &none          &none
-&trans &trans &trans &trans &trans &trans &zj_focus_l    &zj_tab_n      &zj_tab_p      &zj_focus_r    &none          &none
-&trans &trans &trans &trans &trans &trans &none          &none          &zj_focus_d    &zj_close_pane &none          &none          &none          &none
+&trans &trans &trans &trans &zj_float_prev &zj_float_next &zj_focus_u    &zj_float      &zj_close_pane &zj_guest      &none          &none
+&trans &trans &trans &trans &trans          &trans          &zj_focus_l    &zj_tab_n      &zj_tab_p      &zj_focus_r    &none          &none
+&trans &trans &trans &trans &trans          &trans          &none          &none          &zj_focus_d    &zj_new_tab    &zj_new_pane   &zj_host       &none          &none
                                        &trans &trans &trans &none  &none  &none          &none          &none
             >;
         };

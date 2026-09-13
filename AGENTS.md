@@ -39,7 +39,7 @@ This is a [ZMK](https://zmk.dev/) keyboard firmware configuration repository for
 | 8     | Sym      | Symbols layout |
 | 9     | Fun      | Function keys (F1-F12) + Print Screen / Scroll Lock / Pause |
 | 10    | WM       | AeroSpace window manager shortcuts (macOS, Left Alt combos) |
-| 11    | Zide     | zellij/zide actions: `Ctrl-b` (tmux mode) then one key, plus `Ctrl-p w` (float) and `Ctrl-o ]` (host). Held with SPACE. |
+| 11    | Zide     | zellij/zide actions, prefixed: `Ctrl-p` (pane mode: focus h/j/k/l, new pane `n`, float `w`), `Ctrl-t` (tab mode: new `n`, prev `h`, next `l`), `Ctrl-b x` (close pane — tmux mode, cockpit only), `Ctrl-o ]`/`[` (host/guest session), `Alt ]`/`Alt [` (floating-pane swap layouts: staggered → enlarged → spread). Held with SPACE. |
 
 ### Custom Behaviors
 
