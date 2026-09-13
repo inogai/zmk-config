@@ -540,6 +540,7 @@
         ZIDE {
             display-name = "Zide";
             bindings = <
+&trans &trans &trans &trans &trans          &trans          &none          &none          &none          &none          &none          &none
 &trans &trans &trans &trans &zj_float_prev &zj_float_next &zj_focus_u    &zj_float      &zj_close_pane &zj_guest      &none          &none
 &trans &trans &trans &trans &trans          &trans          &zj_focus_l    &zj_tab_n      &zj_tab_p      &zj_focus_r    &none          &none
 &trans &trans &trans &trans &trans          &trans          &none          &none          &zj_focus_d    &zj_new_tab    &zj_new_pane   &zj_host       &none          &none
