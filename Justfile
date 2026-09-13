@@ -20,3 +20,12 @@ flash-left: fetch
 flash-right: fetch
     cp ./firmware/lily58_right-nice_nano_v2-zmk.uf2 /Volumes/NICENANO/ || true
 
+
+# ── Trainer ─────────────────────────────────────────────────────
+
+# 重建 board（讀 config/lily58.keymap → 寫入 repo layer-tutor 的 board JS）
+trainer-gen:
+    python3 trainer/tools/gen_board.py -o ../repos/layer-tutor/typing-tutor/js/boards/lily58.js
+
+trainer-serve:
+    cd ../repos/layer-tutor/typing-tutor && python3 -m http.server 8000
