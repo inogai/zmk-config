@@ -2,104 +2,83 @@
 
 ## Overview
 
-This is a [ZMK](https://zmk.dev/) keyboard firmware configuration repository for a **Lily58** split keyboard using **nice!nano v2** controllers. The keymap is Miryoku-inspired with **Colemak-DH** as the default alpha layout, plus a QWERTY fallback layer.
+ZMK configuration for an **Eyelash Sofle** (nice!nano v2, Nice!View on both halves, one encoder on the left, a 5-way hat on the right). The keymap is QWERTY. GASC home-row mods are on Base. Colemak-DH is not in this keymap.
+
+The shield and ZMK source come from the vendor tree, not stock ZMK. `config/west.yml` pins Cormoran's `v0.3-branch+dya` plus that tree's modules, and pulls the shield from [a741725193/zmk-sofle](https://github.com/a741725193/zmk-sofle). Do not copy the shield into this repo.
+
+`config/lily58.keymap` is the previous keyboard. It is not built.
 
 ## Repository Structure
 
 ```
 .
-├── config/                  # ZMK firmware configuration
-│   ├── west.yml             # Zephyr west manifest (pins ZMK v0.3)
-│   ├── lily58.keymap        # Main keymap (devicetree, ~700 lines)
-│   └── lily58.conf          # Board Kconfig fragment (mouse keys, encoders, display)
-├── boards/shields/          # Custom ZMK shields directory (currently empty)
-├── zephyr/module.yml        # Zephyr module metadata
-├── build.yaml               # GitHub Actions build matrix
-├── keymap-config.yaml       # Keymap-drawer visualization config (glyphs, keycode mappings)
-├── Justfile                 # Task runner (parse, draw, flash)
-├── flake.nix                # Nix dev shell (just, keymap-drawer)
-├── fetch-firmware.sh        # Downloads latest firmware artifacts via `gh` CLI
-└── .github/workflows/build.yml  # CI: builds firmware on push/PR via zmkfirmware/zmk
+├── config/
+│   ├── west.yml                  # Cormoran ZMK fork + vendor shield module
+│   ├── eyelash_sofle.keymap      # Keymap (devicetree)
+│   ├── eyelash_sofle.conf        # Hardware Kconfig (sleep, encoder, RGB, pointing)
+│   ├── lily58.keymap             # Previous Lily58 keymap, not built
+│   └── lily58.conf               # Previous Lily58 Kconfig, not built
+├── build.yaml                    # left, right, settings_reset
+├── Justfile
+├── fetch-firmware.sh
+└── .github/workflows/build.yml   # zmkfirmware build-user-config @v0.3.0
 ```
 
-## Keymap Design
+## Keymap
 
-### Layers (12 total)
+64 positions. Rows 0–3 are 6 + hat + 6. The bottom row is encoder click, five left thumbs, hat click, five right thumbs.
 
-| Index | Name     | Purpose |
-|-------|----------|---------|
-| 0     | Base     | Colemak-DH alphas with home-row mods |
-| 1     | Extra    | QWERTY alphas with home-row mods |
-| 2     | Tap      | Colemak-DH without hold-taps (for gaming / passthrough) |
-| 3     | Button   | Clipboard (Mac: Cmd+C/V/X/Z) + mouse buttons (mirrored) |
-| 4     | Nav      | Navigation (arrows, home/end, pgup/pgdn, ins) + layer switching |
-| 5     | Mouse    | Mouse movement + scroll wheel |
-| 6     | Media    | Media keys, Bluetooth profile select, output toggle, bootloader |
-| 7     | Num      | Number pad layout |
-| 8     | Sym      | Symbols layout |
-| 9     | Fun      | Function keys (F1-F12) + Print Screen / Scroll Lock / Pause |
-| 10    | WM       | AeroSpace window manager shortcuts (macOS, Left Alt combos) |
-| 11    | Zide     | zellij/zide actions, prefixed: `Ctrl-p` (pane mode: focus h/j/k/l, new pane `n`, float `w`), `Ctrl-t` (tab mode: new `n`, prev `h`, next `l`), `Ctrl-b x` (close pane — tmux mode, cockpit only), `Ctrl-o ]`/`[` (host/guest session), `Alt ]`/`Alt [` (floating-pane swap layouts: staggered → enlarged → spread). Held with SPACE. |
+GASC, pinky to index on the left and mirrored on the right. Left mods on the left hand, right mods on the right. `u_mt` is tap-preferred, 250 ms, 120 ms prior-idle. G and H are plain. The outer Shift and Ctrl keys stay.
 
-### Custom Behaviors
+| Finger | Left | Right | Mod |
+|---|---|---|---|
+| Pinky | A | ; | GUI |
+| Ring | S | L | Alt |
+| Middle | D | K | Shift |
+| Index | F | J | Ctrl |
 
-- **`u_mt`** — Hold-tap for mod keys (tap-preferred, 250ms tapping term, 120ms prior-idle). Used for home-row mods.
-- **`u_mt_gui_esc`** — Hold-tap for the left inner thumb (BASE + EXTRA): hold = LGUI (Cmd), tap = ESC. Deliberately `hold-preferred` (no `require-prior-idle`) so any other keypress locks in Cmd for chords; ESC stays standalone in vim/games.
-- **`u_lt`** — Hold-tap for layer keys (tap-preferred, 250ms). Hold = momentary layer, tap = keypress.
-- **`u_to_U_*`** — Tap-dance guards: require double-tap to activate `&to <layer>`. Prevents accidental layer locks.
-- **`u_bt_sel_*`** — Mod-morph: tap = select Bluetooth profile, shift+tap = select then clear (disconnect).
-- **`u_out_tog`** — Mod-morph: tap = toggle output, shift+tap = force USB.
-- **`u_caps_word`** — Mod-morph: tap = caps word, shift+tap = CAPS lock.
+Thumbs, left outer to inner, then right inner to outer:
 
-### Key Design Decisions
+| Left | Right |
+|---|---|
+| spare (`&none`) | Enter, hold Symbols |
+| spare (`&none`) | Backspace, hold Numbers |
+| Esc | Delete, hold Fun |
+| Space, hold Nav | Eyelash layer 1 |
+| Tab, hold ZIDE | Eyelash layer 2 |
 
-- **Mac-first**: Clipboard shortcuts use Cmd (LGUI), not Ctrl. WM layer targets AeroSpace on macOS.
-- **ZIDE sends zellij prefixes, not Cmd**: `Ctrl-b` (tmux mode), `Ctrl-p w` (floating), `Ctrl-o ]` (session), each as **two separate taps** — the prefix is released before the following key, never a three-key chord. Trigger is `&u_lt U_ZIDE SPACE` in BASE (hold = layer, tap still types a space); EXTRA deliberately keeps a plain `&kp SPACE` as a plain-space escape hatch.
-- **No top number row**: Miryoku-style — numbers are on the Num layer, symbols on Sym, F-keys on Fun.
-- **Double-tap layer lock**: All `&to` layer switches require a double-tap to prevent accidental activation.
-- **Shift-functions**: Bluetooth profile clear, output force-USB, and caps lock are accessed via shift-modified taps.
-- **Mouse keys**: Movement acceleration tuned (exponent 1, 1500ms to max speed, 0ms delay).
+### Layers
 
-## Build System
+| Index | Name | Purpose |
+|---|---|---|
+| 0 | Base | QWERTY, GASC, thumb holds above |
+| 1 | Tap | Same letters, no hold-taps. Double-tap Esc returns to Base |
+| 2 | Button | Clipboard and mouse buttons |
+| 3 | Nav | Arrows, home/end, paging. Hold Space |
+| 4 | Mouse | Mouse movement and scroll. Encoder scrolls here |
+| 5 | Media | Media keys, Bluetooth profiles, output, bootloader |
+| 6 | Num | Number pad. Hold Backspace |
+| 7 | Sym | Symbols. Hold Enter |
+| 8 | Fun | F-keys. Hold Delete. This is the old function layer, not the Eyelash one |
+| 9 | WM | AeroSpace shortcuts. Nothing opens this layer |
+| 10 | Zide | Zellij actions. Hold Tab |
+| 11 | Eye1 | Vendor lower layer: F-keys, mouse buttons, RGB. Outer right thumb |
+| 12 | Eye2 | Vendor adjust layer: Bluetooth, USB/BLE, reset, bootloader. Outermost right thumb |
 
-### CI (GitHub Actions)
+The hat sends arrows on Base and Tap, and mouse movement on Mouse, Eye1, and Eye2. Encoder click is mute. Encoder rotation is volume except on Mouse, where it scrolls.
 
-On every push and PR, GitHub Actions builds firmware for both halves:
-- **Left**: `nice_nano_v2` + `lily58_left` shield, with ZMK Studio snippet
-- **Right**: `nice_nano_v2` + `lily58_right` shield
+Clipboard macros send Ctrl. ZIDE macros send the zellij prefix as its own tap, then the following key.
 
-The workflow uses `zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3`.
+## Build
 
-### Local Development
+GitHub Actions builds three UF2s: `eyelash_sofle_left`, `eyelash_sofle_right`, and `settings_reset`. Studio is on the left half only, with locking off.
 
-A Nix flake provides the development environment. Run `direnv allow` (or `nix develop`) to enter the shell.
-
-**Keymap visualization** (via `just`):
 ```
-just parse          # Parse keymap → gen/lily58_keymap.yaml
-just draw           # Generate SVG keymap diagram
+just fetch
+just flash-left     # Mac path: /Volumes/NICENANO
+just flash-right
 ```
 
-**Firmware**:
-```
-just fetch          # Download latest firmware artifacts from CI
-just flash-left     # Flash left half (copies UF2 to NICENANO volume)
-just flash-right    # Flash right half
-```
+On Linux the bootloader drive is `/run/media/$USER/NICENANO`, not `/Volumes/NICENANO`. Flash `settings_reset` on the right half, then the right firmware, then the same pair on the left. The `NICENANO` drive is write-only. Keep a copy of the vendor Actions artifact if you want their stock firmware back.
 
-## Keymap Editing Workflow
-
-1. Edit `config/lily58.keymap` — the single source of truth for the keymap
-2. Run `just parse` to validate and generate the parsed YAML
-3. Run `just draw` to visualize changes as SVG
-4. Commit and push — CI builds the firmware
-5. Run `just fetch` to download the built UF2 files
-6. Run `just flash-left` / `just flash-right` to flash
-
-## Important Notes
-
-- **The keymap is self-contained** — it does not `#include` external Miryoku headers. All behaviors, macros, and layer definitions are defined inline in `lily58.keymap`.
-- **`lily58.keymap.bak`** is an older keymap backup using different hold-tap behaviors (`hl`/`hr` with `hold-trigger-on-release`). It is not used in builds.
-- **ZMK Studio** is enabled on the left half via the `studio-rpc-usb-uart` snippet.
-- **Mouse keys and encoders** are configured in `lily58.conf` but currently commented out (the physical Lily58 has no encoders by default).
-- **Generated files** (`gen/`, `.zmk/`) are gitignored.
+`just parse` and `just draw` still use the Lily58 keymap-drawer config. The trainer still reads `config/lily58.keymap`. Neither knows this layout yet.

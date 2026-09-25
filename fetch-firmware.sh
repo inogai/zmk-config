@@ -33,5 +33,5 @@ ls -lh "$FIRMWARE_DIR"
 
 echo ""
 echo "Done! Flash with:"
-echo "  Left:  cp $FIRMWARE_DIR/lily58_left-nice_nano_v2-zmk.uf2 /Volumes/NICENANO/"
-echo "  Right: cp $FIRMWARE_DIR/lily58_right-nice_nano_v2-zmk.uf2 /Volumes/NICENANO/"
+echo "  Left:  cp $FIRMWARE_DIR/eyelash_sofle_left.uf2 /Volumes/NICENANO/"
+echo "  Right: cp $FIRMWARE_DIR/eyelash_sofle_right.uf2 /Volumes/NICENANO/"

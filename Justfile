@@ -1,4 +1,4 @@
-keyboard := "lily58"
+keyboard := "eyelash_sofle"
 config := "keymap-config.yaml"
 
 # ── Keymap visualization ──────────────────────────────────────────
@@ -15,10 +15,10 @@ fetch:
     ./fetch-firmware.sh
 
 flash-left: fetch
-    cp ./firmware/lily58_left-nice_nano_v2-zmk.uf2 /Volumes/NICENANO/ || true
+    cp ./firmware/eyelash_sofle_left.uf2 /Volumes/NICENANO/ || true
 
 flash-right: fetch
-    cp ./firmware/lily58_right-nice_nano_v2-zmk.uf2 /Volumes/NICENANO/ || true
+    cp ./firmware/eyelash_sofle_right.uf2 /Volumes/NICENANO/ || true
 
 
 # ── Trainer ─────────────────────────────────────────────────────
