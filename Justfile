@@ -23,9 +23,10 @@ flash-right: fetch
 
 # ── Trainer ─────────────────────────────────────────────────────
 
-# 重建 board（讀 config/lily58.keymap → 寫入 repo layer-tutor 的 board JS）
-trainer-gen:
-    python3 trainer/tools/gen_board.py -o ../repos/layer-tutor/typing-tutor/js/boards/lily58.js
+# Emit Eyelash Sofle board declaration for layer-tutor (BOARD_INPUT.md).
+# Override OUT to point at a local layer-tutor checkout.
+trainer-gen OUT="../repos/layer-tutor/typing-tutor/js/boards/eyelash-sofle.js":
+    python3 trainer/tools/gen_board_eyelash.py -o {{OUT}} --json trainer/boards/eyelash-sofle.json
 
 trainer-serve:
     cd ../repos/layer-tutor/typing-tutor && python3 -m http.server 8000
