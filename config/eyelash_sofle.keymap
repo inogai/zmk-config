@@ -6,7 +6,7 @@
  *   Row 4:    encoder, 5 left thumbs, hat click, 5 right thumbs = 12
  *
  * Thumbs, left outer→inner, then right inner→outer:
- *   spare, spare, Esc, Space/Nav, Tab/Zide
+ *   spare, spare, Esc, Space/Nav, Tab/Tmux
  *   Enter/Sym, Backspace/Num, Del/Fun, Eyelash 1, Eyelash 2
  *
  * Clipboard macros send Ctrl, matching the previous Lily58 keymap.
@@ -31,7 +31,7 @@
 #define U_SYM    7
 #define U_FUN    8
 #define U_WM     9
-#define U_ZIDE   10
+#define U_TMUX   10
 #define U_EYE1   11
 #define U_EYE2   12
 
@@ -106,116 +106,126 @@
             bindings = <&bt BT_SEL 4 &bt BT_CLR>;
         };
 
-        /* ZIDE layer — zellij actions. The prefix (Ctrl-p for pane mode, Ctrl-t
-           for tab mode, Ctrl-o for session) goes first as its own tap, then the
-           following key: zellij wants the prefix RELEASED before that key, so
-           these must be two taps and never a three-key chord. Ctrl-p / Ctrl-t
-           are preferred wherever the action exists there, because both the
-           local config and the cockpit bind them; only close-pane has no common
-           path (Ctrl-b x is tmux mode, i.e. cockpit-only). 40/40 is a starting
-           point — if zellij swallows the trailing key, raise it (80–120). */
-        zj_focus_l: zj_focus_l {
+        /* TMUX layer — tmux and herdr actions. Both use Ctrl-b as the prefix,
+           so every binding sends the prefix as its own tap, then the action
+           key: both want the prefix RELEASED before that key, so these must be
+           two taps and never a three-key chord. Trailing keys below are the
+           shared tmux + herdr defaults wherever possible; the ones that need a
+           host-side bind are marked. 40/40 is a starting point — if the prefix
+           is swallowed, raise it (80–120). */
+        tm_focus_l: tm_focus_l {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(P) &kp H>;
+            bindings = <&kp LC(B) &kp H>;
         };
-        zj_focus_r: zj_focus_r {
+        tm_focus_r: tm_focus_r {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(P) &kp L>;
+            bindings = <&kp LC(B) &kp L>;
         };
-        zj_focus_u: zj_focus_u {
+        tm_focus_u: tm_focus_u {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(P) &kp K>;
+            bindings = <&kp LC(B) &kp K>;
         };
-        zj_focus_d: zj_focus_d {
+        tm_focus_d: tm_focus_d {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(P) &kp J>;
+            bindings = <&kp LC(B) &kp J>;
         };
-        zj_tab_n: zj_tab_n {
+        tm_tab_next: tm_tab_next {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(T) &kp L>;
+            bindings = <&kp LC(B) &kp N>;
         };
-        zj_tab_p: zj_tab_p {
+        tm_tab_prev: tm_tab_prev {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(T) &kp H>;
+            bindings = <&kp LC(B) &kp P>;
         };
-        zj_new_tab: zj_new_tab {
+        tm_new_tab: tm_new_tab {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(T) &kp N>;
+            bindings = <&kp LC(B) &kp C>;
         };
-        zj_new_pane: zj_new_pane {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(P) &kp N>;
-        };
-        zj_close_pane: zj_close_pane {
+        tm_close_pane: tm_close_pane {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
             bindings = <&kp LC(B) &kp X>;
         };
-        zj_float: zj_float {
+        /* Split right / split down: herdr defaults (prefix+v, prefix+minus).
+           tmux needs: bind v split-window -h -c "#{pane_current_path}"
+                       bind - split-window -v -c "#{pane_current_path}" */
+        tm_split_right: tm_split_right {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(P) &kp W>;
+            bindings = <&kp LC(B) &kp V>;
         };
-        zj_host: zj_host {
+        tm_split_down: tm_split_down {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(O) &kp RBKT>;
+            bindings = <&kp LC(B) &kp MINUS>;
         };
-
-        /* Floating panes. Alt ] / Alt [ cycle a focused floating pane's
-           swap layout (staggered -> enlarged -> spread). One tap, no prefix. */
-        zj_float_next: zj_float_next {
+        tm_zoom: tm_zoom {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LA(RBKT)>;
+            bindings = <&kp LC(B) &kp Z>;
         };
-        zj_float_prev: zj_float_prev {
+        tm_overview: tm_overview {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LA(LBKT)>;
+            bindings = <&kp LC(B) &kp W>;
         };
-
-        /* Nested sessions (zellij 0.45+): Ctrl-o ] up to the host, Ctrl-o [ back. */
-        zj_guest: zj_guest {
+        /* Cycle pane: herdr default is prefix+tab. tmux's default prefix+Tab
+           SWAPS panes; add `bind Tab select-pane -t :.+` to match cycling. */
+        tm_cycle_pane: tm_cycle_pane {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(O) &kp LBKT>;
+            bindings = <&kp LC(B) &kp TAB>;
+        };
+        /* Detach: tmux default is prefix+d; herdr ships prefix+q, set
+           detach = "prefix+d" in herdr config.toml to match. */
+        tm_detach: tm_detach {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp D>;
+        };
+        /* Scrollback / copy mode: herdr default is prefix+e;
+           tmux needs: bind e copy-mode */
+        tm_scrollback: tm_scrollback {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp E>;
         };
     };
 };
@@ -372,7 +382,7 @@
 &kp TAB    &kp Q   &kp W   &kp E   &kp R   &kp T    &kp DOWN  &kp Y   &kp U   &kp I   &kp O   &kp P     &kp SQT
 &kp LSHFT  &u_mt LGUI A  &u_mt LALT S  &u_mt LSHFT D  &u_mt LCTRL F  &kp G   &kp LEFT  &kp H  &u_mt RCTRL J  &u_mt RSHFT K  &u_mt RALT L  &u_mt RGUI SEMI  &none
 &kp LCTRL  &kp Z  &kp X  &kp COMMA  &kp C  &kp V   &kp RIGHT  &kp B  &kp N  &kp M  &kp DOT  &u_lt U_BUTTON SLASH  &none
-&kp C_MUTE &none &none &kp ESC &u_lt U_NAV SPACE &u_lt U_ZIDE TAB  &none  &u_lt U_SYM RET &u_lt U_NUM BSPC &u_lt U_FUN DEL &mo U_EYE1 &mo U_EYE2
+&kp C_MUTE &none &none &kp ESC &u_lt U_NAV SPACE &u_lt U_TMUX TAB  &none  &u_lt U_SYM RET &u_lt U_NUM BSPC &u_lt U_FUN DEL &mo U_EYE1 &mo U_EYE2
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
         };
@@ -494,14 +504,15 @@
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
         };
 
-        /* 10: ZIDE — hold Tab. Left hand falls through, so typing continues. */
-        ZIDE {
-            display-name = "Zide";
+        /* 10: TMUX — tmux/herdr actions. Hold Tab. Left hand falls through, so
+           typing continues. */
+        TMUX {
+            display-name = "Tmux";
             bindings = <
 &trans &trans &trans &trans &trans &trans  &trans  &none &none &none &none &none &none
-&trans &trans &trans &trans &zj_float_prev &zj_float_next  &trans  &zj_focus_u &zj_float &zj_close_pane &zj_guest &none &none
-&trans &trans &trans &trans &trans &trans  &trans  &zj_focus_l &zj_tab_n &zj_tab_p &zj_focus_r &none &none
-&trans &trans &trans &trans &trans &trans  &trans  &zj_focus_d &zj_new_tab &zj_new_pane &zj_host &none &none
+&trans &trans &trans &trans &tm_cycle_pane &tm_detach  &trans  &tm_focus_u &tm_zoom &tm_close_pane &tm_overview &none &none
+&trans &trans &trans &trans &trans &trans  &trans  &tm_focus_l &tm_tab_next &tm_tab_prev &tm_focus_r &none &none
+&trans &trans &trans &trans &trans &trans  &trans  &tm_focus_d &tm_new_tab &tm_split_right &tm_split_down &tm_scrollback &none
 &trans &trans &trans &trans &trans &trans  &trans  &trans &trans &trans &trans &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;

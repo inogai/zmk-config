@@ -66,10 +66,10 @@ draw_config:
         <path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zm0 7.5l-5.5-2.75L12 4.5l5.5 2.25L12 9.5z"/>
         <text x="22" y="12" font-size="8" fill="currentColor">WM</text>
       </svg>
-    to_zide: |
+    to_tmux: |
       <svg viewBox="0 0 36 16">
         <path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zm0 7.5l-5.5-2.75L12 4.5l5.5 2.25L12 9.5z"/>
-        <text x="22" y="12" font-size="8" fill="currentColor">Zide</text>
+        <text x="22" y="12" font-size="8" fill="currentColor">Tmux</text>
       </svg>
 
 parse_config:
@@ -88,24 +88,24 @@ parse_config:
     "&u_to_U_FUN": $$to_fun$$
     "&u_to_U_MEDIA": $$to_media$$
     "&u_to_U_BUTTON": $$to_btn$$
-    "&u_to_U_WM": $$to_wm$$
+    "&u_to_U_TMUX": $$to_tmux$$
 
-    # ZIDE layer — zellij prefixes (Ctrl-p pane mode / Ctrl-t tab mode /
-    # Ctrl-o session), see the zj_* macros in the keymap
-    "&zj_focus_l": "←"
-    "&zj_focus_r": "→"
-    "&zj_focus_u": "↑"
-    "&zj_focus_d": "↓"
-    "&zj_tab_n": "⇥"
-    "&zj_tab_p": "⇤"
-    "&zj_new_tab": "+⇥"
-    "&zj_new_pane": "⊞"
-    "&zj_close_pane": "✕"
-    "&zj_float": "❐"
-    "&zj_host": "⤒"
-    "&zj_float_next": "❐+"
-    "&zj_float_prev": "❐-"
-    "&zj_guest": "⤓"
+    # TMUX layer — Ctrl-b prefix (tmux + herdr), see the tm_* macros in the keymap
+    "&tm_focus_l": "←"
+    "&tm_focus_r": "→"
+    "&tm_focus_u": "↑"
+    "&tm_focus_d": "↓"
+    "&tm_tab_next": "⇥"
+    "&tm_tab_prev": "⇤"
+    "&tm_new_tab": "+⇥"
+    "&tm_close_pane": "✕"
+    "&tm_split_right": "▌+"
+    "&tm_split_down": "─+"
+    "&tm_zoom": "⤢"
+    "&tm_overview": "⊞"
+    "&tm_cycle_pane": "↹"
+    "&tm_detach": "⇱"
+    "&tm_scrollback": "⇞"
 
     # Caps word
     "&u_caps_word": $$mdi:caps-lock$$

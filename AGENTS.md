@@ -45,7 +45,7 @@ Thumbs, left outer to inner, then right inner to outer:
 | spare (`&none`) | Backspace, hold Numbers |
 | Esc | Delete, hold Fun |
 | Space, hold Nav | Eyelash layer 1 |
-| Tab, hold ZIDE | Eyelash layer 2 |
+| Tab, hold Tmux | Eyelash layer 2 |
 
 ### Layers
 
@@ -61,13 +61,13 @@ Thumbs, left outer to inner, then right inner to outer:
 | 7 | Sym | Symbols. Hold Enter |
 | 8 | Fun | F-keys. Hold Delete. This is the old function layer, not the Eyelash one |
 | 9 | WM | AeroSpace shortcuts. Nothing opens this layer |
-| 10 | Zide | Zellij actions. Hold Tab |
+| 10 | Tmux | tmux/herdr actions (shared Ctrl-b prefix). Hold Tab |
 | 11 | Eye1 | Vendor lower layer: F-keys, mouse buttons, RGB. Outer right thumb |
 | 12 | Eye2 | Vendor adjust layer: Bluetooth, USB/BLE, reset, bootloader. Outermost right thumb |
 
 The hat sends arrows on Base and Tap, and mouse movement on Mouse, Eye1, and Eye2. Encoder click is mute. Encoder rotation is volume except on Mouse, where it scrolls.
 
-Clipboard macros send Ctrl. ZIDE macros send the zellij prefix as its own tap, then the following key.
+Clipboard macros send Ctrl. TMUX macros send the Ctrl-b prefix as its own tap, then the action key — tmux and herdr share the prefix and the h/j/k/l, n/p, c, x, z, w, v, minus, tab, e bindings, so the same sequences work in both.
 
 ## Build
 
