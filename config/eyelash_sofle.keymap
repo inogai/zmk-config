@@ -109,37 +109,20 @@
         /* TMUX layer — tmux and herdr actions. Both use Ctrl-b as the prefix,
            so every binding sends the prefix as its own tap, then the action
            key: both want the prefix RELEASED before that key, so these must be
-           two taps and never a three-key chord. Trailing keys below are the
-           shared tmux + herdr defaults wherever possible; the ones that need a
-           host-side bind are marked. 40/40 is a starting point — if the prefix
-           is swallowed, raise it (80–120). */
-        tm_focus_l: tm_focus_l {
+           two taps and never a three-key chord. Layout assumes one tab = one
+           main pane (+ at most one split, + popup): pane nav is a single cycle
+           key, J/K are tab prev/next (shared C-b n/p defaults on both sides).
+           Host-side binds needed for Tab-cycle, e, t, v, minus in tmux — see
+           each macro. 40/40 is a starting point — if the prefix is swallowed,
+           raise it (80–120). */
+        /* Pane cycle: herdr default prefix+tab. tmux's default prefix+Tab
+           SWAPS panes; rebind: bind Tab select-pane -t :.+ */
+        tm_cycle_pane: tm_cycle_pane {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(B) &kp H>;
-        };
-        tm_focus_r: tm_focus_r {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(B) &kp L>;
-        };
-        tm_focus_u: tm_focus_u {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(B) &kp K>;
-        };
-        tm_focus_d: tm_focus_d {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(B) &kp J>;
+            bindings = <&kp LC(B) &kp TAB>;
         };
         tm_tab_next: tm_tab_next {
             compatible = "zmk,behavior-macro";
@@ -154,6 +137,18 @@
             wait-ms = <40>;
             tap-ms = <40>;
             bindings = <&kp LC(B) &kp P>;
+        };
+        /* Float: a modal popup terminal over the tab. herdr: [[keys.command]]
+           type="popup" on prefix+t (see herdr config.toml). tmux: t is
+           clock-mode; rebind:
+           bind t display-popup -w 80% -h 80% -c "#{pane_current_path}" exec "$SHELL"
+           Exit the shell to close the popup on both sides. */
+        tm_float: tm_float {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp T>;
         };
         tm_new_tab: tm_new_tab {
             compatible = "zmk,behavior-macro";
@@ -171,7 +166,8 @@
         };
         /* Split right / split down: herdr defaults (prefix+v, prefix+minus).
            tmux needs: bind v split-window -h -c "#{pane_current_path}"
-                       bind - split-window -v -c "#{pane_current_path}" */
+                       bind - split-window -v -c "#{pane_current_path}"
+           (tmux's own defaults are " and %, which this layer drops.) */
         tm_split_right: tm_split_right {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -200,15 +196,6 @@
             tap-ms = <40>;
             bindings = <&kp LC(B) &kp W>;
         };
-        /* Cycle pane: herdr default is prefix+tab. tmux's default prefix+Tab
-           SWAPS panes; add `bind Tab select-pane -t :.+` to match cycling. */
-        tm_cycle_pane: tm_cycle_pane {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(B) &kp TAB>;
-        };
         /* Detach: tmux default is prefix+d; herdr ships prefix+q, set
            detach = "prefix+d" in herdr config.toml to match. */
         tm_detach: tm_detach {
@@ -218,8 +205,8 @@
             tap-ms = <40>;
             bindings = <&kp LC(B) &kp D>;
         };
-        /* Scrollback / copy mode: herdr default is prefix+e;
-           tmux needs: bind e copy-mode */
+        /* Scrollback: herdr default prefix+e opens it in $EDITOR
+           (edit_scrollback); tmux's e is free — bind e copy-mode. */
         tm_scrollback: tm_scrollback {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -505,14 +492,15 @@
         };
 
         /* 10: TMUX — tmux/herdr actions. Hold Tab. Left hand falls through, so
-           typing continues. */
+           typing continues. Popup-centric: J/K are tab prev/next, one cycle key
+           for panes, U opens the float popup. */
         TMUX {
             display-name = "Tmux";
             bindings = <
 &trans &trans &trans &trans &trans &trans  &trans  &none &none &none &none &none &none
-&trans &trans &trans &trans &tm_cycle_pane &tm_detach  &trans  &tm_focus_u &tm_zoom &tm_close_pane &tm_overview &none &none
-&trans &trans &trans &trans &trans &trans  &trans  &tm_focus_l &tm_tab_next &tm_tab_prev &tm_focus_r &none &none
-&trans &trans &trans &trans &trans &trans  &trans  &tm_focus_d &tm_new_tab &tm_split_right &tm_split_down &tm_scrollback &none
+&trans &trans &trans &trans &tm_cycle_pane &tm_detach  &trans  &none &tm_float &tm_close_pane &tm_zoom &tm_overview &none
+&trans &trans &trans &trans &trans &trans  &trans  &tm_scrollback &tm_tab_prev &tm_tab_next &none &none &none
+&trans &trans &trans &trans &trans &trans  &trans  &none &tm_new_tab &tm_split_right &tm_split_down &none &none
 &trans &trans &trans &trans &trans &trans  &trans  &trans &trans &trans &trans &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;

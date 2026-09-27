@@ -67,7 +67,7 @@ Thumbs, left outer to inner, then right inner to outer:
 
 The hat sends arrows on Base and Tap, and mouse movement on Mouse, Eye1, and Eye2. Encoder click is mute. Encoder rotation is volume except on Mouse, where it scrolls.
 
-Clipboard macros send Ctrl. TMUX macros send the Ctrl-b prefix as its own tap, then the action key — tmux and herdr share the prefix and the h/j/k/l, n/p, c, x, z, w, v, minus, tab, e bindings, so the same sequences work in both.
+Clipboard macros send Ctrl. TMUX macros send the Ctrl-b prefix as its own tap, then the action key. Layout is popup-centric (one main pane + popup + optional split): U float popup (`C-b t`), J/K tab prev/next (`C-b p/n`), R cycle pane (`C-b Tab`), T detach (`C-b d`), H scrollback (`C-b e`), I close, O zoom, P overview, N new tab (`C-b c`), M/, split right/down (`C-b v/minus`). Shared tmux+herdr defaults: n p c x z w v. Host-side binds needed in tmux: Tab select-pane, t display-popup, e copy-mode, v and minus splits; herdr sets detach=prefix+d and popup on prefix+t.
 
 ## Build
 

@@ -91,10 +91,7 @@ parse_config:
     "&u_to_U_TMUX": $$to_tmux$$
 
     # TMUX layer — Ctrl-b prefix (tmux + herdr), see the tm_* macros in the keymap
-    "&tm_focus_l": "←"
-    "&tm_focus_r": "→"
-    "&tm_focus_u": "↑"
-    "&tm_focus_d": "↓"
+    "&tm_float": "❐"
     "&tm_tab_next": "⇥"
     "&tm_tab_prev": "⇤"
     "&tm_new_tab": "+⇥"
