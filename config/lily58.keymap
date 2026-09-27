@@ -1,21 +1,37 @@
 /*
- * Miryoku layout for Lily58 — self-contained, no external includes.
+ * Silakka54 (built as the upstream ZMK lily58 shield) — QWERTY, GASC
+ * home-row mods. Mirrors config/eyelash_sofle.keymap: same layers 0–10 at
+ * the same indices, same behaviors and macros, same bindings wherever the
+ * key exists on this board.
  *
- * Alphas:    Colemak-DH (default, non-flipped)
- * Clipboard: Windows (Ctrl+C/V/X/Z/Y)
- * Nav:       Windows clipboard + navigation
- * Mouse:     Enabled
- * Layers:    Default (not flipped)
+ * lily58 matrix, 58 positions per layer:
+ *   Rows 0–2: 6 left + 6 right = 12
+ *   Row 3:    6 left + 2 inner + 6 right = 14
+ *   Row 4:    4 left thumbs + 4 right thumbs = 8
+ * Silakka54 has 54 keys. The 2 inner row-3 keys and the innermost thumb on
+ * each side are not fitted, so those 4 slots are &none on every layer.
  *
- * Lily58 physical layout (58 keys):
- *   Row 0: 6L + 6R = 12  (all &none — no Miryoku top row)
- *   Row 1: 6L + 6R = 12  (outer columns &none)
- *   Row 2: 6L + 6R = 12  (outer columns &none)
- *   Row 3: 7L + 7R = 14  (outer columns &none, 2 inner keys physically missing)
- *   Row 4: 4L + 4R = 8   (outer keys &none, 2 inner keys physically missing)
- *   Total: 58
+ * Thumbs, left outer→inner, then right inner→outer:
+ *   Esc, Space/Nav, Tab/Tmux, (missing) | (missing), Enter/Sym, Backspace/Num, Del/Fun
  *
- * The 4 physically-missing inner keys (### in mapping) get &none.
+ * Tradeoffs against the Sofle (64 keys, encoder, 5-way hat, 5 thumbs a side):
+ *   - Hat column (arrows on Base/Tap, mouse move on Mouse/Eye*, hat click):
+ *     dropped. Arrows are on Nav (hold Space); mouse movement is on Mouse.
+ *   - Encoder (click = mute, rotate = volume, scroll on Mouse): dropped.
+ *     Volume is on Media's right home row; Media's right thumbs are
+ *     Stop / Play-Pause / Mute (from the old Lily58 keymap).
+ *   - Two spare (&none) left outer thumbs: dropped. Esc, Space/Nav and
+ *     Tab/Tmux keep their Sofle order on the three fitted left thumbs.
+ *   - Eyelash 1 / Eyelash 2 thumbs and layers 11–12 (vendor F-keys, RGB,
+ *     mouse clicks, BT, reset): dropped; this board has no thumb for them
+ *     and no RGB. F-keys are on Fun, BT/output on Media, bootloader on
+ *     Fun/Num/Mouse/Media.
+ *   - Mouse clicks came from the Eyelash layers on the Sofle. Here Mouse's
+ *     right thumbs are Button 2 / Button 1 / Button 3 (from the old Lily58
+ *     keymap) so the mouse layer is usable without them.
+ *   - No sensor-bindings on any layer (no encoder enabled on this build).
+ *
+ * Clipboard macros send Ctrl.
  */
 
 #include <behaviors.dtsi>
@@ -27,17 +43,16 @@
 
 /* ── Layer indices ─────────────────────────────────────────────── */
 #define U_BASE   0
-#define U_EXTRA  1
-#define U_TAP    2
-#define U_BUTTON 3
-#define U_NAV    4
-#define U_MOUSE  5
-#define U_MEDIA  6
-#define U_NUM    7
-#define U_SYM    8
-#define U_FUN    9
-#define U_WM     10
-#define U_ZIDE   11
+#define U_TAP    1
+#define U_BUTTON 2
+#define U_NAV    3
+#define U_MOUSE  4
+#define U_MEDIA  5
+#define U_NUM    6
+#define U_SYM    7
+#define U_FUN    8
+#define U_WM     9
+#define U_TMUX   10
 
 /* ── Mouse defaults ────────────────────────────────────────────── */
 #define ZMK_POINTING_DEFAULT_MOVE_VAL 1250
@@ -70,7 +85,7 @@
     delay-ms = <0>;
 };
 
-/* ── Macros for BT-select-then-clear (shift+bt_sel = bt_sel+bt_clr) */
+/* ── Macros ────────────────────────────────────────────────────── */
 / {
     macros {
         u_macro_u_bt_sel_0: u_macro_u_bt_sel_0 {
@@ -104,122 +119,113 @@
             bindings = <&bt BT_SEL 4 &bt BT_CLR>;
         };
 
-        /* ZIDE layer — zellij actions. The prefix (Ctrl-p for pane mode, Ctrl-t
-           for tab mode, Ctrl-o for session) goes first as its own tap, then the
-           following key: zellij wants the prefix RELEASED before that key, so
-           these must be two taps and never a three-key chord. Ctrl-p / Ctrl-t
-           are preferred wherever the action exists there, because both the
-           local config and the cockpit bind them; only close-pane has no common
-           path (Ctrl-b x is tmux mode, i.e. cockpit-only). 40/40 is a starting
-           point — if zellij swallows the trailing key, raise it (80–120). */
-        zj_focus_l: zj_focus_l {
+        /* TMUX layer — tmux and herdr actions. Both use Ctrl-b as the prefix,
+           so every binding sends the prefix as its own tap, then the action
+           key: both want the prefix RELEASED before that key, so these must be
+           two taps and never a three-key chord. Layout assumes one tab = one
+           main pane (+ at most one split, + popup): pane nav is a single cycle
+           key, J/K are tab prev/next (shared C-b n/p defaults on both sides).
+           Host-side binds needed for Tab-cycle, e, t, v, minus in tmux — see
+           each macro. 40/40 is a starting point — if the prefix is swallowed,
+           raise it (80–120). */
+        /* Pane cycle: herdr default prefix+tab. tmux's default prefix+Tab
+           SWAPS panes; rebind: bind Tab select-pane -t :.+ */
+        tm_cycle_pane: tm_cycle_pane {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(P) &kp H>;
+            bindings = <&kp LC(B) &kp TAB>;
         };
-        zj_focus_r: zj_focus_r {
+        tm_tab_next: tm_tab_next {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(P) &kp L>;
+            bindings = <&kp LC(B) &kp N>;
         };
-        zj_focus_u: zj_focus_u {
+        tm_tab_prev: tm_tab_prev {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(P) &kp K>;
+            bindings = <&kp LC(B) &kp P>;
         };
-        zj_focus_d: zj_focus_d {
+        /* Float: a modal popup terminal over the tab. herdr: [[keys.command]]
+           type="popup" on prefix+t (see herdr config.toml). tmux: t is
+           clock-mode; rebind:
+           bind t display-popup -w 80% -h 80% -c "#{pane_current_path}" exec "$SHELL"
+           Exit the shell to close the popup on both sides. */
+        tm_float: tm_float {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(P) &kp J>;
+            bindings = <&kp LC(B) &kp T>;
         };
-        zj_tab_n: zj_tab_n {
+        tm_new_tab: tm_new_tab {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(T) &kp L>;
+            bindings = <&kp LC(B) &kp C>;
         };
-        zj_tab_p: zj_tab_p {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(T) &kp H>;
-        };
-        zj_new_tab: zj_new_tab {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(T) &kp N>;
-        };
-        zj_new_pane: zj_new_pane {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(P) &kp N>;
-        };
-        zj_close_pane: zj_close_pane {
+        tm_close_pane: tm_close_pane {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
             bindings = <&kp LC(B) &kp X>;
         };
-        zj_float: zj_float {
+        /* Split right / split down: herdr defaults (prefix+v, prefix+minus).
+           tmux needs: bind v split-window -h -c "#{pane_current_path}"
+                       bind - split-window -v -c "#{pane_current_path}"
+           (tmux's own defaults are " and %, which this layer drops.) */
+        tm_split_right: tm_split_right {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(P) &kp W>;
+            bindings = <&kp LC(B) &kp V>;
         };
-        zj_host: zj_host {
+        tm_split_down: tm_split_down {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(O) &kp RBKT>;
+            bindings = <&kp LC(B) &kp MINUS>;
         };
-
-        /* Floating panes. Alt ] / Alt [ are zellij's built-in "next/previous
-           swap layout" — for a focused floating pane that cycles its
-           swap_floating_layout presets (staggered -> enlarged -> spread), which
-           is how the floating pane gets bigger. One tap, no prefix. Sending
-           these from the layer also means the [ ] keys (SYM layer) are never
-           needed. */
-        zj_float_next: zj_float_next {
+        tm_zoom: tm_zoom {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LA(RBKT)>;
+            bindings = <&kp LC(B) &kp Z>;
         };
-        zj_float_prev: zj_float_prev {
+        tm_overview: tm_overview {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LA(LBKT)>;
+            bindings = <&kp LC(B) &kp W>;
         };
-
-        /* Nested sessions (zellij 0.45+, i.e. the zide cockpit): Ctrl-o ] goes
-           up to the host session, Ctrl-o [ comes back down to the guest. Both
-           are prefixed, and both are emitted here so no bracket key is needed. */
-        zj_guest: zj_guest {
+        /* Detach: tmux default is prefix+d; herdr ships prefix+q, set
+           detach = "prefix+d" in herdr config.toml to match. */
+        tm_detach: tm_detach {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(O) &kp LBKT>;
+            bindings = <&kp LC(B) &kp D>;
+        };
+        /* Scrollback: herdr default prefix+e opens it in $EDITOR
+           (edit_scrollback); tmux's e is free — bind e copy-mode. */
+        tm_scrollback: tm_scrollback {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp E>;
         };
     };
 };
@@ -227,7 +233,7 @@
 /* ── Behaviors ─────────────────────────────────────────────────── */
 / {
     behaviors {
-        /* Hold-tap for mod keys (tap-preferred, 200ms) */
+        /* Home-row mods. Tap-preferred so a roll still types the letter. */
         u_mt: u_mt {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
@@ -237,18 +243,7 @@
             bindings = <&kp>, <&kp>;
         };
 
-        /* CTRL/ESC: hold-preferred so any other keypress locks in the mod (Ctrl+key),
-         * tap when released alone. No require-prior-idle: ESC is used standalone
-         * and after the term expires anyway (vim normal mode, games). */
-        u_mt_gui_esc: u_mt_gui_esc {
-            compatible = "zmk,behavior-hold-tap";
-            #binding-cells = <2>;
-            tapping-term-ms = <200>;
-            flavor = "hold-preferred";
-            bindings = <&kp>, <&kp>;
-        };
-
-        /* Hold-tap for layer keys (tap-preferred, 200ms) */
+        /* Hold = momentary layer, tap = key. */
         u_lt: u_lt {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
@@ -258,9 +253,6 @@
             bindings = <&mo>, <&kp>;
         };
 
-        /* ── Shift-functions (mod-morphs): tap = normal, shift+tap = alt ── */
-
-        /* BT select: tap = select profile, shift+tap = select then clear */
         u_bt_sel_0: u_bt_sel_0 {
             compatible = "zmk,behavior-mod-morph";
             #binding-cells = <0>;
@@ -292,7 +284,6 @@
             mods = <(MOD_LSFT|MOD_RSFT)>;
         };
 
-        /* Output toggle: tap = toggle, shift+tap = force USB */
         u_out_tog: u_out_tog {
             compatible = "zmk,behavior-mod-morph";
             #binding-cells = <0>;
@@ -300,7 +291,6 @@
             mods = <(MOD_LSFT|MOD_RSFT)>;
         };
 
-        /* Caps word: tap = caps_word, shift+tap = CAPS lock */
         u_caps_word: u_caps_word {
             compatible = "zmk,behavior-mod-morph";
             #binding-cells = <0>;
@@ -308,18 +298,12 @@
             mods = <(MOD_LSFT|MOD_RSFT)>;
         };
 
-        /* ── Double-tap guards: require double-tap to activate &to ── */
+        /* Double-tap guards: require a second tap to lock a layer. */
         u_to_U_BASE: u_to_U_BASE {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
             tapping-term-ms = <200>;
             bindings = <&none>, <&to U_BASE>;
-        };
-        u_to_U_EXTRA: u_to_U_EXTRA {
-            compatible = "zmk,behavior-tap-dance";
-            #binding-cells = <0>;
-            tapping-term-ms = <200>;
-            bindings = <&none>, <&to U_EXTRA>;
         };
         u_to_U_TAP: u_to_U_TAP {
             compatible = "zmk,behavior-tap-dance";
@@ -376,7 +360,7 @@
             bindings = <&none>, <&to U_WM>;
         };
 
-        /* ESC tap, double-tap to leave TAP (gaming) layer */
+        /* Esc tap, double-tap leaves the Tap layer. */
         u_esc_to_base: u_esc_to_base {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
@@ -386,166 +370,141 @@
     };
 };
 
-/*
- * ── Keymap ────────────────────────────────────────────────────────
- *
- * Lily58 layout reference (58 keys):
- *
- * Row 0 (12): all &none — Miryoku has no top number row
- * Row 1 (12): &none  [5 Miryoku keys]  [5 Miryoku keys]  &none
- * Row 2 (12): &none  [5 Miryoku keys]  [5 Miryoku keys]  &none
- * Row 3 (14): &none  [5 Miryoku keys]  &none(missing)  &none(missing)  [5 Miryoku keys]  &none
- * Row 4 (8):  [3 Miryoku thumbs]  &none(missing)  &none(missing)  [3 Miryoku thumbs]
- */
-
 / {
     keymap {
         compatible = "zmk,keymap";
 
-        /* 0: BASE — QWERTY (default) */
+        /* 0: BASE — QWERTY, GASC on the home row. */
         BASE {
             display-name = "Base";
             bindings = <
-&kp GRAVE &kp N1       &kp N2         &kp N3         &kp N4         &kp N5                              &kp N6         &kp N7         &kp N8         &kp N9         &kp N0              &kp MINUS
-&kp TAB &kp Q          &kp W          &kp E          &kp R          &kp T                              &kp Y          &kp U          &kp I          &kp O          &kp P              &kp SQT
-&kp LSHFT &kp A        &kp S          &kp D          &kp F          &kp G                              &kp H          &kp J          &kp K          &kp L          &kp SEMI          &none
-&kp LCTRL &u_lt U_NAV COMMA &u_lt U_FUN Z &u_mt RALT X &kp C        &kp V          &none       &none  &kp B          &kp N          &kp M          &u_mt RALT DOT &u_lt U_BUTTON SLASH &none
-                                       &kp LALT        &u_mt_gui_esc LCTRL ESC &u_lt U_ZIDE SPACE &none  &none  &u_lt U_SYM RET &u_lt U_NUM BSPC &u_lt U_FUN DEL
+&kp GRAVE &kp N1 &kp N2 &kp N3 &kp N4 &kp N5  &kp N6 &kp N7 &kp N8 &kp N9 &kp N0 &kp MINUS
+&kp TAB &kp Q &kp W &kp E &kp R &kp T  &kp Y &kp U &kp I &kp O &kp P &kp SQT
+&kp LSHFT &u_mt LGUI A &u_mt LALT S &u_mt LSHFT D &u_mt LCTRL F &kp G  &kp H &u_mt RCTRL J &u_mt RSHFT K &u_mt RALT L &u_mt RGUI SEMI &none
+&kp LCTRL &kp Z &kp X &kp COMMA &kp C &kp V  &none &none  &kp B &kp N &kp M &kp DOT &u_lt U_BUTTON SLASH &none
+&kp ESC &u_lt U_NAV SPACE &u_lt U_TMUX TAB  &none &none  &u_lt U_SYM RET &u_lt U_NUM BSPC &u_lt U_FUN DEL
             >;
         };
 
-        /* 1: EXTRA — Colemak-DH (fallback) */
-        EXTRA {
-            display-name = "Extra";
-            bindings = <
-&kp GRAVE &kp N1       &kp N2         &kp N3         &kp N4         &kp N5                              &kp N6         &kp N7         &kp N8         &kp N9         &kp N0              &kp MINUS
-&kp TAB &kp Q          &kp W          &kp F          &kp P          &kp B                              &kp J          &kp L          &kp U          &kp Y          &kp SEMI           &kp SQT
-&kp LSHFT &kp A        &kp R          &kp S          &kp T          &kp G                              &kp M          &kp N          &kp E          &kp I          &kp O              &none
-&kp LCTRL &u_lt U_FUN Z &u_mt RALT X &kp C        &kp D          &kp V          &none       &none  &kp K          &kp H          &kp COMMA      &u_mt RALT DOT &u_lt U_BUTTON SLASH &none
-                                       &kp LALT        &u_mt_gui_esc LCTRL ESC &kp SPACE      &none  &none  &u_lt U_SYM RET &u_lt U_NUM BSPC &u_lt U_FUN DEL
-            >;
-        };
-
-        /* 2: TAP — Colemak-DH (no hold-taps) */
+        /* 1: TAP — same QWERTY letters, no hold-taps. Double-tap Esc returns to Base. */
         TAP {
             display-name = "Tap";
             bindings = <
-&u_esc_to_base &kp N1 &kp N2 &kp N3 &kp N4 &kp N5 &kp N6 &kp N7 &kp N8 &kp N9 &kp N0 &kp MINUS
-&kp TAB &kp Q &kp W &kp E &kp R &kp T &kp Y &kp U &kp I &kp O &kp P &none
-&kp LSHFT &kp A &kp S &kp D &kp F &kp G &kp H &kp J &kp K &kp L &kp SEMI &none
-&kp LCTRL &kp COMMA &kp Z &kp X &kp C &kp V &none &none &kp B &kp N &kp M &kp DOT &kp SLASH &none
-                                       &kp LALT        &kp LCTRL        &kp SPACE      &none  &none  &kp RET        &kp BSPC       &kp DEL
+&kp GRAVE &kp N1 &kp N2 &kp N3 &kp N4 &kp N5  &kp N6 &kp N7 &kp N8 &kp N9 &kp N0 &kp MINUS
+&kp TAB &kp Q &kp W &kp E &kp R &kp T  &kp Y &kp U &kp I &kp O &kp P &kp SQT
+&kp LSHFT &kp A &kp S &kp D &kp F &kp G  &kp H &kp J &kp K &kp L &kp SEMI &none
+&kp LCTRL &kp Z &kp X &kp COMMA &kp C &kp V  &none &none  &kp B &kp N &kp M &kp DOT &kp SLASH &none
+&u_esc_to_base &kp SPACE &kp TAB  &none &none  &kp RET &kp BSPC &kp DEL
             >;
         };
 
-        /* 3: BUTTON — clipboard & mouse buttons (mirrored) */
+        /* 2: BUTTON — clipboard. Thumbs fall through to Base. */
         BUTTON {
             display-name = "Button";
             bindings = <
-&none  &none          &none          &none          &none          &none                              &none          &none          &none          &none          &none          &none
-&none  U_UND          U_CUT          U_CPY          U_PST          U_RDO                              U_RDO          U_PST          U_CPY          U_CUT          U_UND          &none
-&none  &kp LCTRL       &kp LALT       &kp LCTRL      &kp LSHFT      &none                              &none          &kp LSHFT      &kp LCTRL      &kp LALT       &kp LCTRL       &none
-&none  U_UND          U_CUT          U_CPY          U_PST          U_RDO          &none       &none  U_RDO          U_PST          U_CPY          U_CUT          U_UND          &none
-                                       U_BTN3         U_BTN1         U_BTN2         &none  &none  U_BTN2         U_BTN1         U_BTN3
+&none &none &none &none &none &none  &none &none &none &none &none &none
+&none U_UND U_CUT U_CPY U_PST U_RDO  U_RDO U_PST U_CPY U_CUT U_UND &none
+&none &kp LCTRL &kp LALT &kp LCTRL &kp LSHFT &none  &none &kp LSHFT &kp LCTRL &kp LALT &kp LCTRL &none
+&none U_UND U_CUT U_CPY U_PST U_RDO  &none &none  U_RDO U_PST U_CPY U_CUT U_UND &none
+&trans &trans &trans  &none &none  &trans &trans &trans
             >;
         };
 
-        /* 4: NAV — navigation + clipboard. Miryoku places undo/cut/copy/paste
-           on the upper right row; u_to_U_NAV is a double-tap layer lock. */
+        /* 3: NAV — hold Space. */
         NAV {
             display-name = "Nav";
             bindings = <
-&trans &trans &trans &trans &trans &trans &kp LC(Y)      &kp LC(V)       &kp LC(C)       &kp LC(X)       &kp LC(Z)       &none
-&trans &trans &trans &trans &trans &trans &u_to_U_TAP    &u_caps_word    &kp LEFT        &kp DOWN        &kp UP          &kp RIGHT
-&trans &trans &trans &trans &trans &trans &kp INS         &kp HOME        &kp PG_DN       &kp PG_UP       &kp END         &none
-&trans &trans &trans &trans &trans &trans &none           &none           &none           &none           &none           &none          &none &none
-                                       &trans &trans &trans &none  &none  &kp RET        &kp BSPC       &kp DEL
+&trans &trans &trans &trans &trans &trans  &u_to_U_TAP &u_caps_word &none &none &none &none
+&trans &trans &trans &trans &trans &trans  &trans &kp LBRC &kp RBRC &kp LPAR &kp RPAR &trans
+&trans &trans &trans &trans &trans &trans  &kp LEFT &kp DOWN &kp UP &kp RIGHT &none &none
+&trans &trans &trans &trans &trans &trans  &none &none  &trans &kp LBKT &kp RBKT &trans &trans &trans
+&trans &trans &trans  &none &none  &trans &trans &trans
             >;
         };
 
-        /* 5: MOUSE — mouse movement & scroll */
+        /* 4: MOUSE — right thumbs are mouse buttons here (Sofle: Eyelash layers). */
         MOUSE {
             display-name = "Mouse";
             bindings = <
-&none  &none          &none          &none          &none          &none                              &none          &none          &none          &none          &none          &none
-&none  &bootloader    &u_to_U_TAP    &u_to_U_EXTRA  &u_to_U_BASE   &none                              U_RDO          U_PST          U_CPY          U_CUT          U_UND          &none
-&none  &kp LCTRL       &kp LALT       &kp LCTRL      &kp LSHFT      &none                              &none          U_MS_L         U_MS_D         U_MS_U         U_MS_R         &none
-&none  &none          &kp RALT       &u_to_U_SYM    &u_to_U_MOUSE  &none          &none       &none  &none          U_WH_L         U_WH_D         U_WH_U         U_WH_R         &none
-                                       &none          &none          &none          &none  &none  U_BTN2         U_BTN1         U_BTN3
+&none &none &none &none &none &none  &none &none &none &none &none &none
+&none &bootloader &u_to_U_TAP &none &u_to_U_BASE &none  U_RDO U_PST U_CPY U_CUT U_UND &none
+&none &kp LCTRL &kp LALT &kp LCTRL &kp LSHFT &none  &none U_MS_L U_MS_D U_MS_U U_MS_R &none
+&none &none &kp RALT &u_to_U_SYM &u_to_U_MOUSE &none  &none &none  &none U_WH_L U_WH_D U_WH_U U_WH_R &none
+&trans &trans &trans  &none &none  U_BTN2 U_BTN1 U_BTN3
             >;
         };
 
-        /* 6: MEDIA — media keys, BT, RGB */
+        /* 5: MEDIA — Bluetooth, output, studio unlock. Right thumbs replace the encoder. */
         MEDIA {
             display-name = "Media";
             bindings = <
-&none  &studio_unlock &none          &none          &none          &none                              &none          &none          &none          &none          &none          &none
-&none  &bootloader    &u_to_U_TAP    &u_to_U_EXTRA  &u_to_U_BASE   &none                              &none          &none          &none          &none          &none          &none
-&none  &kp LCTRL       &kp LALT       &kp LCTRL      &kp LSHFT      &none                              &none          &kp C_PREV     &kp C_VOL_DN   &kp C_VOL_UP   &kp C_NEXT     &none
-&none  &none          &kp RALT       &u_to_U_FUN    &u_to_U_MEDIA  &none          &none       &none  &u_out_tog     &u_bt_sel_0    &u_bt_sel_1    &u_bt_sel_2    &u_bt_sel_3    &none
-                                       &none          &none          &none          &none  &none  &kp C_STOP     &kp C_PP       &kp C_MUTE
+&none &studio_unlock &none &none &none &none  &none &none &none &none &none &none
+&none &bootloader &u_to_U_TAP &none &u_to_U_BASE &none  &none &none &none &none &none &none
+&none &kp LCTRL &kp LALT &kp LCTRL &kp LSHFT &none  &none &kp C_PREV &kp C_VOL_DN &kp C_VOL_UP &kp C_NEXT &none
+&none &none &kp RALT &u_to_U_FUN &u_to_U_MEDIA &none  &none &none  &u_out_tog &u_bt_sel_0 &u_bt_sel_1 &u_bt_sel_2 &u_bt_sel_3 &none
+&trans &trans &trans  &none &none  &kp C_STOP &kp C_PP &kp C_MUTE
             >;
         };
 
-        /* 7: NUM — number pad */
+        /* 6: NUM */
         NUM {
             display-name = "Num";
             bindings = <
-&none  &none          &none          &none          &none          &none                              &none          &none          &none          &none          &none          &none
-&none  &kp LBKT       &kp N7         &kp N8         &kp N9         &kp RBKT                           &none          &u_to_U_BASE   &u_to_U_EXTRA  &u_to_U_TAP    &bootloader    &none
-&none  &kp SEMI       &kp N4         &kp N5         &kp N6         &kp EQUAL                          &none          &kp LSHFT      &kp LCTRL      &kp LALT       &kp LCTRL       &none
-&none  &kp GRAVE      &kp N1         &kp N2         &kp N3         &kp BSLH       &none       &none  &none          &u_to_U_NUM    &u_to_U_NAV    &kp RALT       &none          &none
-                                       &kp DOT        &kp N0         &kp MINUS      &none  &none  &none          &none          &none
+&none &none &none &none &none &none  &none &none &none &none &none &none
+&none &kp LBKT &kp N7 &kp N8 &kp N9 &kp RBKT  &none &u_to_U_BASE &none &u_to_U_TAP &bootloader &none
+&none &kp SEMI &kp N4 &kp N5 &kp N6 &kp EQUAL  &none &kp LSHFT &kp LCTRL &kp LALT &kp LCTRL &none
+&none &kp GRAVE &kp N1 &kp N2 &kp N3 &kp BSLH  &none &none  &none &u_to_U_NUM &u_to_U_NAV &kp RALT &none &none
+&trans &trans &trans  &none &none  &trans &trans &trans
             >;
         };
 
-        /* 8: SYM — symbols */
+        /* 7: SYM */
         SYM {
             display-name = "Sym";
             bindings = <
-&none  &none          &none          &none          &none          &none                              &none          &none          &none          &none          &none          &none
-&none  &kp LBRC       &kp AMPS       &kp ASTRK      &kp LPAR       &kp RBRC                           &none          &u_to_U_BASE   &u_to_U_EXTRA  &u_to_U_TAP    &bootloader    &none
-&none  &kp COLON      &kp DLLR       &kp PRCNT      &kp CARET      &kp PLUS                           &none          &kp LSHFT      &kp LCTRL      &kp LALT       &kp LCTRL       &none
-&none  &kp TILDE      &kp EXCL       &kp AT         &kp HASH       &kp PIPE       &none       &none  &none          &u_to_U_SYM    &u_to_U_MOUSE  &kp RALT       &none          &none
-                                       &kp LPAR       &kp RPAR       &kp UNDER      &none  &none  &none          &none          &none
+&none &none &none &none &none &none  &trans &trans &trans &trans &trans &trans
+&trans &none &none &kp ASTRK &kp AMPS &none  &trans &trans &trans &trans &trans &trans
+&trans &kp DQT &kp CARET &kp PRCNT &kp DLLR &kp PLUS  &trans &trans &trans &trans &trans &trans
+&trans &kp TILDE &kp HASH &kp AT &kp EXCL &kp PIPE  &none &none  &trans &trans &trans &trans &trans &trans
+&trans &trans &trans  &none &none  &trans &trans &trans
             >;
         };
 
-        /* 9: FUN — function keys */
+        /* 8: FUN — held on Delete. */
         FUN {
             display-name = "Fun";
             bindings = <
-&bootloader &none          &none          &none          &none          &none                              &none          &none          &none          &none          &none          &none
-&none  &kp F12        &kp F7         &kp F8         &kp F9         &kp PSCRN                          &none          &u_to_U_BASE   &u_to_U_EXTRA  &u_to_U_TAP    &bootloader    &none
-&none  &kp F11        &kp F4         &kp F5         &kp F6         &kp SLCK                           &none          &kp LSHFT      &kp LCTRL      &kp LALT       &kp LCTRL       &none
-&none  &kp F10        &kp F1         &kp F2         &kp F3         &kp PAUSE_BREAK &none       &none  &none          &u_to_U_FUN    &u_to_U_MEDIA  &kp RALT       &none          &none
-                                       &kp K_APP      &kp SPACE      &kp TAB        &none  &none  &none          &none          &none
+&bootloader &none &none &none &none &none  &none &none &none &none &none &none
+&none &kp F12 &kp F7 &kp F8 &kp F9 &kp PSCRN  &none &u_to_U_BASE &none &u_to_U_TAP &bootloader &none
+&none &kp F11 &kp F4 &kp F5 &kp F6 &kp SLCK  &none &kp LSHFT &kp LCTRL &kp LALT &kp LCTRL &none
+&none &kp F10 &kp F1 &kp F2 &kp F3 &kp PAUSE_BREAK  &none &none  &none &u_to_U_FUN &u_to_U_MEDIA &kp RALT &none &none
+&trans &trans &trans  &none &none  &trans &trans &trans
             >;
         };
 
-        /* 10: WM — AeroSpace workspace and window management */
+        /* 9: WM — AeroSpace. No key opens this layer yet. */
         WM {
             display-name = "WM";
             bindings = <
-&none  &none          &none          &none          &none          &none                              &none          &none          &none          &none          &none          &none
-&none  &kp LA(LBKT)   &kp LA(N7)     &kp LA(N8)     &kp LA(N9)     &kp LA(RBKT)                       &none          &kp LA(DOT)    &kp LA(N0)     &kp LA(MINUS)  &none          &none
-&none  &kp LA(SEMI)   &kp LA(N4)     &kp LA(N5)     &kp LA(N6)     &kp LA(EQUAL)                      &none          &kp LA(H)      &kp LA(J)      &kp LA(K)      &kp LA(L)      &none
-&none  &kp LA(GRAVE)  &kp LA(N1)     &kp LA(N2)     &kp LA(N3)     &kp LA(BSLH)     &none   &none     &none          &kp LA(ESC)    &u_to_U_NAV    &kp RALT       &none          &none
-                                     &none          &none          &none            &none   &none     &none          &kp LSHFT      &none
+&none &none &none &none &none &none  &none &none &none &none &none &none
+&none &kp LA(LBKT) &kp LA(N7) &kp LA(N8) &kp LA(N9) &kp LA(RBKT)  &none &kp LA(DOT) &kp LA(N0) &kp LA(MINUS) &none &none
+&none &kp LA(SEMI) &kp LA(N4) &kp LA(N5) &kp LA(N6) &kp LA(EQUAL)  &none &kp LA(H) &kp LA(J) &kp LA(K) &kp LA(L) &none
+&none &kp LA(GRAVE) &kp LA(N1) &kp LA(N2) &kp LA(N3) &kp LA(BSLH)  &none &none  &none &kp LA(ESC) &u_to_U_NAV &kp RALT &none &none
+&trans &trans &trans  &none &none  &trans &trans &trans
             >;
         };
 
-        /* 11: ZIDE — zellij/zide actions. Held with SPACE; the right hand sends
-           the Ctrl-b sequences (see the zj_* macros), left hand is &trans so
-           typing keeps working while the layer is held. */
-        ZIDE {
-            display-name = "Zide";
+        /* 10: TMUX — tmux/herdr actions. Hold Tab. Left hand falls through, so
+           typing continues. Popup-centric: J/K are tab prev/next, one cycle key
+           for panes, U opens the float popup. */
+        TMUX {
+            display-name = "Tmux";
             bindings = <
-&trans &trans &trans &trans &trans          &trans          &none          &none          &none          &none          &none          &none
-&trans &trans &trans &trans &zj_float_prev &zj_float_next &zj_focus_u    &zj_float      &zj_close_pane &zj_guest      &none          &none
-&trans &trans &trans &trans &trans          &trans          &zj_focus_l    &zj_tab_n      &zj_tab_p      &zj_focus_r    &none          &none
-&trans &trans &trans &trans &trans          &trans          &none          &none          &zj_focus_d    &zj_new_tab    &zj_new_pane   &zj_host       &none          &none
-                                       &trans &trans &trans &none  &none  &none          &none          &none
+&trans &trans &trans &trans &trans &trans  &none &none &none &none &none &none
+&trans &trans &trans &trans &tm_cycle_pane &tm_detach  &none &tm_float &tm_close_pane &tm_zoom &tm_overview &none
+&trans &trans &trans &trans &trans &trans  &tm_scrollback &tm_tab_prev &tm_tab_next &none &none &none
+&trans &trans &trans &trans &trans &trans  &none &none  &none &tm_new_tab &tm_split_right &tm_split_down &none &none
+&trans &trans &trans  &none &none  &trans &trans &trans
             >;
         };
     };

@@ -6,7 +6,7 @@ ZMK configuration for an **Eyelash Sofle** (nice!nano v2, Nice!View on both halv
 
 The shield and ZMK source come from the vendor tree, not stock ZMK. `config/west.yml` pins Cormoran's `v0.3-branch+dya` plus that tree's modules, and pulls the shield from [a741725193/zmk-sofle](https://github.com/a741725193/zmk-sofle). Do not copy the shield into this repo.
 
-`config/lily58.keymap` is the previous keyboard. It is not built.
+`config/lily58.keymap` is the Silakka54 (54 keys, built as the upstream `lily58` shield). It is still in use and is built alongside the Sofle. It follows the Sofle's layers 0–10 at the same indices; the header comment lists what did not fit.
 
 ## Repository Structure
 
@@ -16,9 +16,9 @@ The shield and ZMK source come from the vendor tree, not stock ZMK. `config/west
 │   ├── west.yml                  # Cormoran ZMK fork + vendor shield module
 │   ├── eyelash_sofle.keymap      # Keymap (devicetree)
 │   ├── eyelash_sofle.conf        # Hardware Kconfig (sleep, encoder, RGB, pointing)
-│   ├── lily58.keymap             # Previous Lily58 keymap, not built
-│   └── lily58.conf               # Previous Lily58 Kconfig, not built
-├── build.yaml                    # left, right, settings_reset
+│   ├── lily58.keymap             # Silakka54 keymap (lily58 shield), built
+│   └── lily58.conf               # Silakka54 Kconfig (pointing)
+├── build.yaml                    # sofle left/right, lily58 left/right, settings_reset
 ├── Justfile
 ├── fetch-firmware.sh
 └── .github/workflows/build.yml   # zmkfirmware build-user-config @v0.3.0
@@ -71,7 +71,7 @@ Clipboard macros send Ctrl. TMUX macros send the Ctrl-b prefix as its own tap, t
 
 ## Build
 
-GitHub Actions builds three UF2s: `eyelash_sofle_left`, `eyelash_sofle_right`, and `settings_reset`. Studio is on the left half only, with locking off.
+GitHub Actions builds five UF2s: `eyelash_sofle_left`, `eyelash_sofle_right`, `lily58_left`, `lily58_right` (Silakka54), and `settings_reset`. Studio is on the left half only on both boards; locking is off on the Sofle and on (default) on the Silakka54, unlocked from its Media layer.
 
 ```
 just fetch
