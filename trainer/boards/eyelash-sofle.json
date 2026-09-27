@@ -3,7 +3,7 @@
   "name": "Eyelash Sofle",
   "productName": "Eyelash Sofle (ZMK, QWERTY GASC)",
   "formFactor": "5-row split · Sofle + hat/encoder",
-  "description": "Eyelash Sofle from inogai/zmk-config: Space-hold Nav, Enter-hold Sym, Backspace-hold Num, Tab-hold ZIDE, Delete-hold Fun. Tutor L1=Nav L2=Sym.",
+  "description": "Eyelash Sofle from inogai/zmk-config: Space-hold Nav, Enter-hold Sym, Backspace-hold Num, Tab-hold Tmux, Delete-hold Fun. Tutor L1=Nav L2=Sym.",
   "geometry": "eyelash-sofle",
   "vilPath": null,
   "comingSoon": false,

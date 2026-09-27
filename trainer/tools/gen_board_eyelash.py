@@ -216,7 +216,7 @@ def main() -> None:
         right_rows.append(rrow)
         idx += ALPHA_LEFT + ALPHA_HAT + ALPHA_RIGHT
 
-    # Thumb row: enc, none, none, Esc, Space/Nav, Tab/Zide | hat, Enter/Sym, Bspc/Num, Del/Fun, Eye1, Eye2
+    # Thumb row: enc, none, none, Esc, Space/Nav, Tab/Tmux | hat, Enter/Sym, Bspc/Num, Del/Fun, Eye1, Eye2
     thumb_left_idx = [3, 4, 5]   # Esc, Space, Tab (skip enc + two none)
     thumb_right_idx = [7, 8, 9]  # Enter, Bspc, Del (skip hat none; skip Eye mo)
     lrow, rrow = [], []
@@ -303,7 +303,7 @@ def main() -> None:
         "formFactor": "5-row split · Sofle + hat/encoder",
         "description": (
             "Eyelash Sofle from inogai/zmk-config: Space-hold Nav, Enter-hold Sym, "
-            "Backspace-hold Num, Tab-hold ZIDE, Delete-hold Fun. Tutor L1=Nav L2=Sym."
+            "Backspace-hold Num, Tab-hold Tmux, Delete-hold Fun. Tutor L1=Nav L2=Sym."
         ),
         "geometry": "eyelash-sofle",
         "vilPath": None,
