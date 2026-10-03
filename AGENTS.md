@@ -67,7 +67,7 @@ Thumbs, left outer to inner, then right inner to outer:
 
 The hat sends arrows on Base and Tap, and mouse movement on Mouse, Eye1, and Eye2. Encoder click is mute. Encoder rotation is volume except on Mouse, where it scrolls.
 
-Clipboard macros send Ctrl. TMUX macros send the Ctrl-b prefix as its own tap, then the action key. The layer is trimmed to the herdr actions actually used: right home row H/L switch workspace (`C-b h`/`C-b l`), J/K move between tabs (`C-b n`/`C-b p`, J = next), U hops (`C-b a`, the quicklook hint picker), I enters copy mode (`C-b [`), P is the picker (`C-b w`), N opens a tab (`C-b c`). The herdr side matches on the agent host (`nixdots:machines/agent.nix`): `previous_workspace`/`next_workspace` on `prefix+h`/`prefix+l` (herdr leaves both unset by default), `copy_mode` on `prefix+[` and the hint picker on `prefix+a` (already the defaults), navigate mode split so workspaces take `j`/`k` and panes `ctrl+j`/`ctrl+k`, and `ui.prompt_new_tab_name = false`.
+Clipboard macros send Ctrl. TMUX macros send the Ctrl-b prefix as its own tap, then the action key. The layer is trimmed to the herdr actions actually used: right home row H/L switch workspace (`C-b h`/`C-b l`), J/K move between tabs (`C-b n`/`C-b p`, J = next), U hops (`C-b a`, a hop-style path picker), I enters copy mode (`C-b [`), P is the picker (`C-b w`), N opens a tab (`C-b c`). The host side must name the two actions herdr leaves unset — `previous_workspace`/`next_workspace` on `prefix+h`/`prefix+l`; the rest (`copy_mode` on `prefix+[`, `workspace_picker` on `prefix+w`, the tab defaults) already match.
 
 ## Build
 
