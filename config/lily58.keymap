@@ -379,9 +379,9 @@
             display-name = "Base";
             bindings = <
 &kp GRAVE &kp N1 &kp N2 &kp N3 &kp N4 &kp N5  &kp N6 &kp N7 &kp N8 &kp N9 &kp N0 &kp MINUS
-&kp TAB &kp Q &kp W &kp E &kp R &kp T  &kp Y &kp U &kp I &kp O &kp P &kp SQT
-&kp LSHFT &u_mt LGUI A &u_mt LALT S &u_mt LSHFT D &u_mt LCTRL F &kp G  &kp H &u_mt RCTRL J &u_mt RSHFT K &u_mt RALT L &u_mt RGUI SEMI &none
-&kp LCTRL &kp Z &kp X &kp COMMA &kp C &kp V  &none &none  &kp B &kp N &kp M &kp DOT &u_lt U_BUTTON SLASH &none
+&kp TAB &kp Q &kp W &kp E &kp R &kp T  &kp Y &kp U &kp I &kp O &kp P &kp EQUAL
+&kp LSHFT &u_mt LGUI A &u_mt LALT S &u_mt LSHFT D &u_mt LCTRL F &kp G  &kp H &u_mt RCTRL J &u_mt RSHFT K &u_mt RALT L &u_mt RGUI SEMI &kp SQT
+&kp LCTRL &kp Z &kp X &kp COMMA &kp C &kp V  &none &none  &kp B &kp N &kp M &kp DOT &u_lt U_BUTTON SLASH &kp BSLH
 &kp ESC &u_lt U_NAV SPACE &u_lt U_TMUX TAB  &none &none  &u_lt U_SYM RET &u_lt U_NUM BSPC &u_lt U_FUN DEL
             >;
         };
@@ -391,9 +391,9 @@
             display-name = "Tap";
             bindings = <
 &kp GRAVE &kp N1 &kp N2 &kp N3 &kp N4 &kp N5  &kp N6 &kp N7 &kp N8 &kp N9 &kp N0 &kp MINUS
-&kp TAB &kp Q &kp W &kp E &kp R &kp T  &kp Y &kp U &kp I &kp O &kp P &kp SQT
-&kp LSHFT &kp A &kp S &kp D &kp F &kp G  &kp H &kp J &kp K &kp L &kp SEMI &none
-&kp LCTRL &kp Z &kp X &kp COMMA &kp C &kp V  &none &none  &kp B &kp N &kp M &kp DOT &kp SLASH &none
+&kp TAB &kp Q &kp W &kp E &kp R &kp T  &kp Y &kp U &kp I &kp O &kp P &kp EQUAL
+&kp LSHFT &kp A &kp S &kp D &kp F &kp G  &kp H &kp J &kp K &kp L &kp SEMI &kp SQT
+&kp LCTRL &kp Z &kp X &kp COMMA &kp C &kp V  &none &none  &kp B &kp N &kp M &kp DOT &kp SLASH &kp BSLH
 &u_esc_to_base &kp SPACE &kp TAB  &none &none  &kp RET &kp BSPC &kp DEL
             >;
         };
