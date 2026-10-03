@@ -91,18 +91,14 @@ parse_config:
     "&u_to_U_TMUX": $$to_tmux$$
 
     # TMUX layer — Ctrl-b prefix (tmux + herdr), see the tm_* macros in the keymap
-    "&tm_float": "❐"
+    "&tm_ws_prev": "⊟"
+    "&tm_ws_next": "⊞"
+    "&tm_hop": "⤳"
+    "&tm_copy": "⇞"
     "&tm_tab_next": "⇥"
     "&tm_tab_prev": "⇤"
     "&tm_new_tab": "+⇥"
-    "&tm_close_pane": "✕"
-    "&tm_split_right": "▌+"
-    "&tm_split_down": "─+"
-    "&tm_zoom": "⤢"
-    "&tm_overview": "⊞"
-    "&tm_cycle_pane": "↹"
-    "&tm_detach": "⇱"
-    "&tm_scrollback": "⇞"
+    "&tm_overview": "☰"
 
     # Caps word
     "&u_caps_word": $$mdi:caps-lock$$

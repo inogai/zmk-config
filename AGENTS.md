@@ -67,7 +67,7 @@ Thumbs, left outer to inner, then right inner to outer:
 
 The hat sends arrows on Base and Tap, and mouse movement on Mouse, Eye1, and Eye2. Encoder click is mute. Encoder rotation is volume except on Mouse, where it scrolls.
 
-Clipboard macros send Ctrl. TMUX macros send the Ctrl-b prefix as its own tap, then the action key. Layout is popup-centric (one main pane + popup + optional split): U float popup (`C-b t`), J/K tab prev/next (`C-b p/n`), R cycle pane (`C-b Tab`), T detach (`C-b d`), H scrollback (`C-b e`), I close, O zoom, P overview, N new tab (`C-b c`), M/, split right/down (`C-b v/minus`). Shared tmux+herdr defaults: n p c x z w v. Host-side binds needed in tmux: Tab select-pane, t display-popup, e copy-mode, v and minus splits; herdr sets detach=prefix+d and popup on prefix+t.
+Clipboard macros send Ctrl. TMUX macros send the Ctrl-b prefix as its own tap, then the action key. The layer is trimmed to the herdr actions actually used: right home row H/L switch workspace (`C-b h`/`C-b l`), J/K move between tabs (`C-b n`/`C-b p`, J = next), U hops (`C-b a`, the quicklook hint picker), I enters copy mode (`C-b [`), P is the picker (`C-b w`), N opens a tab (`C-b c`). The herdr side matches on the agent host (`nixdots:machines/agent.nix`): `previous_workspace`/`next_workspace` on `prefix+h`/`prefix+l` (herdr leaves both unset by default), `copy_mode` on `prefix+[` and the hint picker on `prefix+a` (already the defaults), navigate mode split so workspaces take `j`/`k` and panes `ctrl+j`/`ctrl+k`, and `ui.prompt_new_tab_name = false`.
 
 ## Build
 

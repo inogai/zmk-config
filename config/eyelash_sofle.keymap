@@ -109,20 +109,43 @@
         /* TMUX layer — tmux and herdr actions. Both use Ctrl-b as the prefix,
            so every binding sends the prefix as its own tap, then the action
            key: both want the prefix RELEASED before that key, so these must be
-           two taps and never a three-key chord. Layout assumes one tab = one
-           main pane (+ at most one split, + popup): pane nav is a single cycle
-           key, J/K are tab prev/next (shared C-b n/p defaults on both sides).
-           Host-side binds needed for Tab-cycle, e, t, v, minus in tmux — see
-           each macro. 40/40 is a starting point — if the prefix is swallowed,
-           raise it (80–120). */
-        /* Pane cycle: herdr default prefix+tab. tmux's default prefix+Tab
-           SWAPS panes; rebind: bind Tab select-pane -t :.+ */
-        tm_cycle_pane: tm_cycle_pane {
+           two taps and never a three-key chord. Trimmed to the herdr actions
+           actually used: workspaces on H/L, tab prev/next on J/K, new tab on
+           N, the picker on P, hop and copy mode on U/I. 40/40 is a starting
+           point — if the prefix is swallowed, raise it (80–120).
+           Host-side binds needed in herdr (config.toml): next_workspace /
+           previous_workspace on prefix+l / prefix+h, hop on prefix+a, copy
+           mode on prefix+[; and prompt_new_tab_name = false under [ui]. */
+        /* Workspace prev/next: herdr prefix+h / prefix+l. */
+        tm_ws_prev: tm_ws_prev {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&kp LC(B) &kp TAB>;
+            bindings = <&kp LC(B) &kp H>;
+        };
+        tm_ws_next: tm_ws_next {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp L>;
+        };
+        /* Hop: a hop-style path picker, herdr prefix+a. */
+        tm_hop: tm_hop {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp A>;
+        };
+        /* Copy mode: herdr prefix+[ . */
+        tm_copy: tm_copy {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
+            bindings = <&kp LC(B) &kp LBKT>;
         };
         tm_tab_next: tm_tab_next {
             compatible = "zmk,behavior-macro";
@@ -138,18 +161,6 @@
             tap-ms = <40>;
             bindings = <&kp LC(B) &kp P>;
         };
-        /* Float: a modal popup terminal over the tab. herdr: [[keys.command]]
-           type="popup" on prefix+t (see herdr config.toml). tmux: t is
-           clock-mode; rebind:
-           bind t display-popup -w 80% -h 80% -c "#{pane_current_path}" exec "$SHELL"
-           Exit the shell to close the popup on both sides. */
-        tm_float: tm_float {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(B) &kp T>;
-        };
         tm_new_tab: tm_new_tab {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -157,62 +168,12 @@
             tap-ms = <40>;
             bindings = <&kp LC(B) &kp C>;
         };
-        tm_close_pane: tm_close_pane {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(B) &kp X>;
-        };
-        /* Split right / split down: herdr defaults (prefix+v, prefix+minus).
-           tmux needs: bind v split-window -h -c "#{pane_current_path}"
-                       bind - split-window -v -c "#{pane_current_path}"
-           (tmux's own defaults are " and %, which this layer drops.) */
-        tm_split_right: tm_split_right {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(B) &kp V>;
-        };
-        tm_split_down: tm_split_down {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(B) &kp MINUS>;
-        };
-        tm_zoom: tm_zoom {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(B) &kp Z>;
-        };
         tm_overview: tm_overview {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
             bindings = <&kp LC(B) &kp W>;
-        };
-        /* Detach: tmux default is prefix+d; herdr ships prefix+q, set
-           detach = "prefix+d" in herdr config.toml to match. */
-        tm_detach: tm_detach {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(B) &kp D>;
-        };
-        /* Scrollback: herdr default prefix+e opens it in $EDITOR
-           (edit_scrollback); tmux's e is free — bind e copy-mode. */
-        tm_scrollback: tm_scrollback {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
-            bindings = <&kp LC(B) &kp E>;
         };
     };
 };
@@ -492,15 +453,16 @@
         };
 
         /* 10: TMUX — tmux/herdr actions. Hold Tab. Left hand falls through, so
-           typing continues. Popup-centric: J/K are tab prev/next, one cycle key
-           for panes, U opens the float popup. */
+           typing continues. Trimmed to the herdr actions in use: H/L switch
+           workspace, J/K move between tabs, N opens a tab, P is the picker,
+           U hops, I enters copy mode. */
         TMUX {
             display-name = "Tmux";
             bindings = <
 &trans &trans &trans &trans &trans &trans  &trans  &none &none &none &none &none &none
-&trans &trans &trans &trans &tm_cycle_pane &tm_detach  &trans  &none &tm_float &tm_close_pane &tm_zoom &tm_overview &none
-&trans &trans &trans &trans &trans &trans  &trans  &tm_scrollback &tm_tab_prev &tm_tab_next &none &none &none
-&trans &trans &trans &trans &trans &trans  &trans  &none &tm_new_tab &tm_split_right &tm_split_down &none &none
+&trans &trans &trans &trans &trans &trans  &trans  &none &tm_hop &tm_copy &none &tm_overview &none
+&trans &trans &trans &trans &trans &trans  &trans  &tm_ws_prev &tm_tab_next &tm_tab_prev &tm_ws_next &none &none
+&trans &trans &trans &trans &trans &trans  &trans  &none &tm_new_tab &none &none &none &none
 &trans &trans &trans &trans &trans &trans  &trans  &trans &trans &trans &trans &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN>;
